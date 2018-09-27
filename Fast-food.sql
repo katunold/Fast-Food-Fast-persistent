@@ -5,7 +5,29 @@
 -- Dumped from database version 10.4
 -- Dumped by pg_dump version 10.4
 
--- Started on 2018-09-26 16:29:03 EAT
+-- Started on 2018-09-26 21:18:25 EAT
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 2913 (class 1262 OID 29266)
+-- Name: Fast-Food; Type: DATABASE; Schema: -; Owner: postgres
+--
+
+CREATE DATABASE "Fast-Food" WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8';
+
+
+ALTER DATABASE "Fast-Food" OWNER TO postgres;
+
+\connect -reuse-previous=on "dbname='Fast-Food'"
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -39,7 +61,7 @@ ALTER SCHEMA test OWNER TO postgres;
 
 --
 -- TOC entry 1 (class 3079 OID 12964)
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner:
 --
 
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
@@ -48,7 +70,7 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 --
 -- TOC entry 2915 (class 0 OID 0)
 -- Dependencies: 1
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner:
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
@@ -612,9 +634,10 @@ ALTER TABLE ONLY test.orders
     ADD CONSTRAINT orders_user_id_fkey FOREIGN KEY (user_id) REFERENCES test."user"(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
--- Completed on 2018-09-26 16:29:03 EAT
+-- Completed on 2018-09-26 21:18:26 EAT
 
 --
 -- PostgreSQL database dump complete
 --
+
 
