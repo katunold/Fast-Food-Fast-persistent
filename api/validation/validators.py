@@ -3,6 +3,7 @@ module to handle user input validation
 """
 import re
 
+
 from api.models.user_model import Users
 
 
@@ -42,8 +43,6 @@ class Validators:
         :param length:
         :return:
         """
-        if not isinstance(length, int):
-            raise ValueError("length must be an integer")
         if length > len(password):
             return False
         return password.isalnum()
@@ -79,13 +78,9 @@ class Validators:
         :param contact:
         :return:
         """
-        if not contact:
-            return False
-
         contact_regex = re.compile("^[0-9]{10,13}$")
         if contact_regex.match(contact):
             return True
-
         return False
 
     @staticmethod
@@ -93,3 +88,12 @@ class Validators:
         if user_type.lower() == "admin" or user_type.lower() == "client":
             return True
         return False
+
+    @staticmethod
+    def check_auth_header(auth_header):
+        if auth_header:
+            try:
+                auth_token = auth_header.split(' ')[1]
+                return auth_token
+            except IndexError:
+                return None
