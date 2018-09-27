@@ -1,6 +1,8 @@
 DROP DATABASE IF EXISTS "Fast-Food";
 CREATE DATABASE "Fast-Food";
 
+DROP SCHEMA IF EXISTS production CASCADE;
+
 CREATE SCHEMA production;
 
 CREATE TABLE production."user" (
@@ -11,6 +13,8 @@ CREATE TABLE production."user" (
     user_type character varying(100) NOT NULL,
     password character varying(255) NOT NULL
 );
+
+DROP SCHEMA IF EXISTS tests CASCADE;
 
 CREATE SCHEMA test;
 
