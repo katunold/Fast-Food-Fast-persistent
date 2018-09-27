@@ -2,10 +2,12 @@
 Module handles all tests
 """
 import json
+import time
 from unittest import TestCase
 
 from api.config.config import TestingConfig
 from api.models.database import DatabaseConnection
+from api.models.token_model import Tokens
 from run import APP
 
 
@@ -150,7 +152,7 @@ class TestUserAuth(TestCase):
         testing invalid contact
         :return:
         """
-        register = self.register_user('Arnold', 'arnold@gmail', '0706180672', 'qwerty', 'admin')
+        register = self.register_user('Arnold', 'arnold@gmail.com', '0706180', 'qwerty', 'admin')
         data = json.loads(register.data.decode())
         self.assertEqual(register.status_code, 400)
         self.assertIn("error_message", data)
@@ -289,3 +291,99 @@ class TestUserAuth(TestCase):
         self.assertTrue(response_data['error_message'] == 'some of these fields have empty/no values')
         self.assertTrue(login_user.content_type == 'application/json')
         self.assertEqual(login_user.status_code, 400)
+
+    def test_valid_logout(self):
+        """ Test for logout before token expires """
+
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+        # user login
+        login_user = self.login_user('Arnold', 'qwerty')
+        # valid token logout
+        response = self.client().post(
+            '/api/v1/auth/logout',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(
+                    login_user.data.decode()
+                )['auth_token']
+            )
+        )
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'success')
+        self.assertTrue(data['message'] == 'Successfully logged out')
+        self.assertEqual(response.status_code, 200)
+
+    def test_invalid_logout(self):
+        """ Testing logout after the token expires """
+
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+        # user login
+        login_user = self.login_user('Arnold', 'qwerty')
+
+        # invalid token logout
+        time.sleep(6)
+        response = self.client().post(
+            '/api/v1/auth/logout',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(
+                    login_user.data.decode()
+                )['auth_token']
+            )
+        )
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(
+            data['message'] == 'Signature expired. Please log in again.')
+        self.assertEqual(response.status_code, 401)
+
+    def test_valid_blacklisted_token_logout(self):
+        """
+        Test for logout after a valid token gets blacklisted
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+
+        # user login
+        login_user = self.login_user('Arnold', 'qwerty')
+
+        # blacklist a valid token
+        Tokens().blacklist_token(token=json.loads(login_user.data.decode())['auth_token'])
+
+        # blacklisted valid token logout
+        response = self.client().post(
+            '/api/v1/auth/logout',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(
+                    login_user.data.decode()
+                )['auth_token']
+            )
+        )
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['message'] == 'Token blacklisted. Please log in again.')
+        self.assertEqual(response.status_code, 401)
+
+    def test_user_logout_malformed_bearer_token(self):
+        """
+        Test for user status with malformed bearer token
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+
+        # user login
+        login_user = self.login_user('Arnold', 'qwerty')
+
+        response = self.client().post(
+            '/api/v1/auth/logout/',
+            headers=dict(
+                Authorization='Bearer' + json.loads(login_user.data.decode())['auth_token']
+            )
+        )
+        data = json.loads(response.data.decode())
+        print(data)
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['message'] == 'Bearer token malformed')
+        self.assertEqual(response.status_code, 401)
