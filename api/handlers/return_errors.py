@@ -87,6 +87,6 @@ class ReturnError:
         req = request.get_json()
         return jsonify({
             "status": "fail",
-            "error_message": "User type {0} does not exist ".format(req['user_name']),
+            "error_message": "User type {0} does not exist ".format(req['user_type']),
             "data": req
         }), 400
