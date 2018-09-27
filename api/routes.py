@@ -1,6 +1,7 @@
 """
 Urls class , to handel request urls,
 """
+from api.controllers.login_controller import LoginController
 from api.controllers.sign_up_controller import SignUpController
 
 
@@ -14,4 +15,7 @@ class Urls:
 
         """Authentication routes"""
         app.add_url_rule('/api/v1/auth/signup/', view_func=SignUpController.as_view('sign_up_user'),
+                         methods=['POST'], strict_slashes=False)
+
+        app.add_url_rule('/api/v1/auth/login/', view_func=LoginController.as_view('login_user'),
                          methods=['POST'], strict_slashes=False)
