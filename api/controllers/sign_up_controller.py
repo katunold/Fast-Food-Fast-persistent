@@ -51,7 +51,7 @@ class SignUpController(MethodView):
         elif not Validators.validate_user_type(user_type):
             return ReturnError.invalid_user_type()
         user = self._user_.register_user(user_name, email, contact,
-                                         Authenticate.hash_password(password), user_type)
+                                         Authenticate.hash_password(password), user_type.lower())
         user = copy.deepcopy(user)
         del user.password
 
