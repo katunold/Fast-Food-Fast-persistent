@@ -7,6 +7,7 @@ import bcrypt
 import jwt
 
 from api.config.config import BaseConfig
+from api.models.token_model import Tokens
 from api.models.user_model import Users
 from api.utils.singleton import Singleton
 
@@ -34,6 +35,26 @@ class Authenticate(metaclass=Singleton):
             return val
         except Exception as ex:
             return ex
+
+    @staticmethod
+    def decode_auth_token(auth_token):
+        """
+        Decodes the auth token
+        :param auth_token:
+        :return:
+        """
+
+        try:
+            payload = jwt.decode(auth_token, BaseConfig.SECRET_KEY)
+            is_blacklisted_token = Tokens().check_blacklist(auth_token)
+            if is_blacklisted_token:
+                return 'Token blacklisted. Please log in again.'
+            else:
+                return payload['sub']
+        except jwt.ExpiredSignatureError:
+            return 'Signature expired. Please log in again.'
+        except jwt.InvalidTokenError:
+            return 'Invalid token. Please log in again.'
 
     @staticmethod
     def hash_password(password):
