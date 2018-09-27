@@ -2,6 +2,7 @@
 Urls class , to handel request urls,
 """
 from api.controllers.login_controller import LoginController
+from api.controllers.logout_controller import LogoutController
 from api.controllers.sign_up_controller import SignUpController
 
 
@@ -18,4 +19,7 @@ class Urls:
                          methods=['POST'], strict_slashes=False)
 
         app.add_url_rule('/api/v1/auth/login/', view_func=LoginController.as_view('login_user'),
+                         methods=['POST'], strict_slashes=False)
+
+        app.add_url_rule('/api/v1/auth/logout', view_func=LogoutController.as_view('logout'),
                          methods=['POST'], strict_slashes=False)
