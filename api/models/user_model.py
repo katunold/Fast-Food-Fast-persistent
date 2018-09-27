@@ -50,10 +50,8 @@ class Users(metaclass=Singleton):
         user = UserModel(user_name, email, contact, password, user_type)
         user.password = user.password.decode('utf8')
         del user.user_id
-        submit = self._database_.insert(self._table_, user.__dict__)
+        self._database_.insert(self._table_, user.__dict__)
 
-        if not submit:
-            return None
         return user
 
     def find_user_by_username(self, username) -> UserModel or None:
