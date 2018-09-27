@@ -1,5 +1,6 @@
 DROP DATABASE IF EXISTS "Fast-Food";
 CREATE DATABASE "Fast-Food";
+\connect "Fast-Food"
 
 DROP SCHEMA IF EXISTS production CASCADE;
 
