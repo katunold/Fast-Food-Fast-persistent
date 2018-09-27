@@ -1,2 +1,2 @@
-# Fast-Food-Fast-persistent
+# Fast-Food-Fast-persistent [![Build Status](https://travis-ci.org/katunold/Fast-Food-Fast-persistent.svg?branch=feature2-register)](https://travis-ci.org/katunold/Fast-Food-Fast-persistent) [![Coverage Status](https://coveralls.io/repos/github/katunold/Fast-Food-Fast-persistent/badge.svg?branch=feature2-register)](https://coveralls.io/github/katunold/Fast-Food-Fast-persistent?branch=feature2-register) [![Maintainability](https://api.codeclimate.com/v1/badges/d545bdbca13a9bd80124/maintainability)](https://codeclimate.com/github/katunold/Fast-Food-Fast-persistent/maintainability)
 Fast-Food-Fast is a food delivery service app for a restaurant. This version is integrated with a database to store data persistently
