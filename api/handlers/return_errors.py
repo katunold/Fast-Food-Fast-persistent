@@ -90,3 +90,19 @@ class ReturnError:
             "error_message": "User type {0} does not exist ".format(req['user_type']),
             "data": req
         }), 400
+
+    @staticmethod
+    def user_bearer_token_error():
+        response_object = {
+            'status': 'fail',
+            'message': 'Bearer token malformed'
+        }
+        return jsonify(response_object), 401
+
+    @staticmethod
+    def invalid_user_token(resp):
+        response_object = {
+            'status': 'fail',
+            'message': resp
+        }
+        return jsonify(response_object), 401
