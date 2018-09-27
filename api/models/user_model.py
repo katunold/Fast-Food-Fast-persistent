@@ -1,7 +1,6 @@
 """
 Module for user models
 """
-import datetime
 
 from api.models.database import DatabaseConnection
 from api.utils.singleton import Singleton
@@ -70,7 +69,8 @@ class Users(metaclass=Singleton):
             user = UserModel(res['user_name'], res['email'],
                              res['contact'], None, res['user_type'])
             user.user_id = res["user_id"]
-            return user.user_name
+            user.password = res['password'].encode('utf8')
+            return user
         return None
 
     def find_user_by_email(self, email) -> UserModel or None:
