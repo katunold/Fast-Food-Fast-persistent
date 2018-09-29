@@ -73,13 +73,21 @@ class ReturnError:
         return jsonify(response_object), 409
 
     @staticmethod
-    def invalid_user_name():
-        req = request.get_json()
+    def item_already_exists():
+        response_object = {
+            'status': 'fail',
+            'error_message': 'Item already exists',
+            'data': False,
+
+        }
+        return jsonify(response_object), 409
+
+    @staticmethod
+    def invalid_name():
         return jsonify({
             "status": "fail",
-            "error_message": "User name {0} is wrong, It should contain "
-                             "only alphabetic characters".format(req['user_name']),
-            "data": req
+            "error_message": "A name should consist of only alphabetic characters",
+            "data": False
         }), 400
 
     @staticmethod
@@ -106,3 +114,11 @@ class ReturnError:
             'message': resp
         }
         return jsonify(response_object), 401
+
+    @staticmethod
+    def denied_permission():
+        response_object = {
+            'status': 'fail',
+            'message': 'Permission denied, Please Login as Admin'
+        }
+        return jsonify(response_object), 403
