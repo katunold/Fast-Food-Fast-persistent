@@ -28,3 +28,5 @@ class Urls:
         """Menu routes"""
         app.add_url_rule('/api/v1/menu', view_func=MenuController.as_view('add_to_menu'),
                          methods=['POST'], strict_slashes=False)
+        app.add_url_rule('/api/v1/menu', view_func=MenuController.as_view('get_menu'),
+                         methods=['GET'], strict_slashes=False)
