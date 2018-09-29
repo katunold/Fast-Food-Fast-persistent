@@ -1,8 +1,9 @@
 """
 Module for food item models
 """
+from typing import List
+
 from api.models.database import DatabaseConnection
-from api.models.user_model import UserModel
 from api.utils.singleton import Singleton
 
 
@@ -43,6 +44,34 @@ class FoodItems(metaclass=Singleton):
         self._database_.insert(self._table_, menu_data.__dict__)
 
         return menu_data
+
+    def get_menu(self) -> [FoodItemModel]:
+        """
+        Get all menu items
+        :return:
+        """
+        response = self._database_.find(self._table_, criteria=None)
+
+        if response:
+            if isinstance(response, list) and len(response) > 1:
+                data: List[FoodItemModel] = []
+                for res in response:
+                    item_data = FoodItemModel(res['item_name'], res['user_id'])
+                    item_data.item_status = res['item_status']
+                    item_data.item_id = res['item_id']
+                    del item_data.user_id
+                    data.append(item_data)
+                return data
+            elif isinstance(response, dict) or (isinstance(response, list) and len(response) == 1):
+                if isinstance(response, list):
+                    response = response[0]
+                item_data1 = FoodItemModel(response['item_name'], response['user_id'])
+                item_data1.item_status = response['item_status']
+                item_data1.item_id = response['item_id']
+                del item_data1.user_id
+                return item_data1
+
+        return None
 
     def find_item_by_name(self, item_name):
         """
