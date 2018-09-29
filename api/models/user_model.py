@@ -85,3 +85,18 @@ class Users(metaclass=Singleton):
             user.user_id = res['user_id']
             return user.email
         return None
+
+    def find_user_by_id(self, user_id) -> UserModel or None:
+        """
+        find a specific user given a user id
+        :param user_id:
+        :return:
+        """
+        criteria = {'user_id': user_id}
+        res = self._database_.find(self._table_, criteria=criteria)
+        if res and isinstance(res, dict):
+            user = UserModel(res['user_name'], res['email'],
+                             res['contact'], None, res['user_type'])
+            user.user_id = res['user_id']
+            return user
+        return None
