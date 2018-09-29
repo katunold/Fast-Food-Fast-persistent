@@ -20,6 +20,10 @@ class MenuController(MethodView):
     food_model = FoodItems()
 
     def post(self):
+        """
+        Method to post a menu item
+        :return:
+        """
 
         # get auth_token
         auth_header = request.headers.get('Authorization')
@@ -61,5 +65,40 @@ class MenuController(MethodView):
                 return ReturnError.denied_permission()
             else:
                 return ReturnError.invalid_user_token(resp)
+        else:
+            return ReturnError.user_bearer_token_error()
+
+    def get(self):
+        """
+        Method to return existing menu items
+        :return:
+        """
+
+        # get auth_token
+        auth_header = request.headers.get('Authorization')
+
+        if self.validate.check_auth_header(auth_header):
+            auth_token = self.validate.check_auth_header(auth_header)
+
+            resp = self.auth.decode_auth_token(auth_token)
+            if not isinstance(resp, str):
+                menu_data = self.food_model.get_menu()
+
+                if menu_data:
+                    if isinstance(menu_data, list) and len(menu_data) > 0:
+                        response_object = {
+                            "status": "successful",
+                            "data": [obj.__dict__ for obj in menu_data]
+                        }
+                        return jsonify(response_object), 200
+                    elif isinstance(menu_data, object):
+
+                        response_object = {
+                            "status": "successful",
+                            "data": [menu_data.__dict__]
+                        }
+                        return jsonify(response_object), 200
+                else:
+                    return ReturnError.no_menu_items()
         else:
             return ReturnError.user_bearer_token_error()
