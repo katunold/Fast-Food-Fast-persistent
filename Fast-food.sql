@@ -19,7 +19,7 @@ CREATE TABLE production."user" (
 CREATE TABLE production."menu_items" (
     item_id SERIAL NOT NULL,
     item_name character varying(255) NOT NULL,
-    user_id integer NOT NULL FOREIGN KEY (user_id) REFERENCES production."user"(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    user_id integer NOT NULL REFERENCES production."user"(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
     item_status character varying(100) NOT NULL
 );
 
@@ -45,7 +45,7 @@ CREATE TABLE test."user" (
 CREATE TABLE test."menu_items" (
     item_id SERIAL NOT NULL,
     item_name character varying(255) NOT NULL,
-    user_id integer NOT NULL FOREIGN KEY (user_id) REFERENCES test."user"(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    user_id integer NOT NULL REFERENCES test."user"(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
     item_status character varying(100) NOT NULL
 );
 
