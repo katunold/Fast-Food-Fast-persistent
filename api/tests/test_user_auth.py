@@ -166,7 +166,7 @@ class TestUserAuth(TestCase):
         register = self.register_user('Arnold94', 'arnold@gmail.com', '0706180672', 'qwerty', 'admin')
         data = json.loads(register.data.decode())
         self.assertIn("error_message", data)
-        self.assertTrue(data['data'])
+        self.assertFalse(data['data'])
         self.assertTrue(data['error_message'])
         self.assertEqual(register.status_code, 400)
         self.assertTrue(register.content_type, 'application/json')
@@ -250,7 +250,7 @@ class TestUserAuth(TestCase):
         login_user = self.client().post(
             '/api/v1/auth/login/',
             data=json.dumps(dict(
-                user_name="Arnold",
+                user_name="Arnold"
             )),
             content_type='application/json'
         )
@@ -383,7 +383,256 @@ class TestUserAuth(TestCase):
             )
         )
         data = json.loads(response.data.decode())
-        print(data)
         self.assertTrue(data['status'] == 'fail')
         self.assertTrue(data['message'] == 'Bearer token malformed')
         self.assertEqual(response.status_code, 401)
+
+    # ------------------------- Testing the Add menu endpoint ---------------------------------- #
+
+    def test_add_menu_item_admin(self):
+        """
+        Test for adding a menu item by the admin
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+
+        # user login
+        login = self.login_user('Arnold', 'qwerty')
+
+        add_food_item = self.client().post(
+            '/api/v1/menu',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(login.data.decode())['auth_token']
+            ),
+            data=json.dumps(dict(
+                food_item="Katogo"
+            )),
+            content_type="application/json"
+        )
+
+        data = json.loads(add_food_item.data.decode())
+
+        self.assertTrue(data['status'] == 'success')
+        self.assertTrue(data['message'] == 'Successfully Added a new food item')
+        self.assertEqual(add_food_item.status_code, 201)
+
+    def test_add_menu_item_client(self):
+        """
+        Test for adding a menu item by the client
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'client')
+
+        # user login
+        login = self.login_user('Arnold', 'qwerty')
+
+        add_food_item = self.client().post(
+            '/api/v1/menu',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(login.data.decode())['auth_token']
+            ),
+            data=json.dumps(dict(
+                food_item="Katogo"
+            )),
+            content_type="application/json"
+        )
+
+        data = json.loads(add_food_item.data.decode())
+
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['message'] == 'Permission denied, Please Login as Admin')
+        self.assertEqual(add_food_item.status_code, 403)
+
+    def test_add_menu_item_admin_empty(self):
+        """
+        Test for adding a menu item with empty fields
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+
+        # user login
+        login = self.login_user('Arnold', 'qwerty')
+
+        add_food_item = self.client().post(
+            '/api/v1/menu',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(login.data.decode())['auth_token']
+            ),
+            data=json.dumps(dict(
+                food_item=" "
+            )),
+            content_type="application/json"
+        )
+
+        data = json.loads(add_food_item.data.decode())
+
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['error_message'] == 'some of these fields have empty/no values')
+        self.assertTrue(data['data'])
+        self.assertTrue(add_food_item.content_type == 'application/json')
+        self.assertEqual(add_food_item.status_code, 400)
+
+    def test_add_menu_item_admin_missing(self):
+        """
+        Test for adding a menu item with missing fields
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+
+        # user login
+        login = self.login_user('Arnold', 'qwerty')
+
+        add_food_item = self.client().post(
+            '/api/v1/menu',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(login.data.decode())['auth_token']
+            ),
+            data=json.dumps(dict()),
+            content_type="application/json"
+        )
+
+        data = json.loads(add_food_item.data.decode())
+
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['error_message'] == 'some of these fields are missing')
+        self.assertTrue(data['data'])
+        self.assertTrue(add_food_item.content_type == 'application/json')
+        self.assertEqual(add_food_item.status_code, 400)
+
+    def test_add_menu_item_admin_data_type(self):
+        """
+        Test for adding a menu item with wrong data type fields
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+
+        # user login
+        login = self.login_user('Arnold', 'qwerty')
+
+        add_food_item = self.client().post(
+            '/api/v1/menu',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(login.data.decode())['auth_token']
+            ),
+            data=json.dumps(dict(
+                food_item=12313343
+            )),
+            content_type="application/json"
+        )
+
+        data = json.loads(add_food_item.data.decode())
+
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['error_message'] == 'Only string data type supported')
+        self.assertFalse(data['data'])
+        self.assertTrue(add_food_item.content_type == 'application/json')
+        self.assertEqual(add_food_item.status_code, 400)
+
+    def test_add_menu_item_admin_item_exists(self):
+        """
+        Test for adding a menu item with wrong data type fields
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+
+        # user login
+        login = self.login_user('Arnold', 'qwerty')
+
+        # Add item for the first time
+        self.client().post(
+            '/api/v1/menu',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(login.data.decode())['auth_token']
+            ),
+            data=json.dumps(dict(
+                food_item="katogo"
+            )),
+            content_type="application/json"
+        )
+
+        # Add item for the second time
+        add_food_item = self.client().post(
+            '/api/v1/menu',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(login.data.decode())['auth_token']
+            ),
+            data=json.dumps(dict(
+                food_item="katogo"
+            )),
+            content_type="application/json"
+        )
+
+        data = json.loads(add_food_item.data.decode())
+
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['error_message'] == 'Item already exists')
+        self.assertFalse(data['data'])
+        self.assertTrue(add_food_item.content_type == 'application/json')
+        self.assertEqual(add_food_item.status_code, 409)
+
+    def test_add_menu_item_admin_token_expired(self):
+        """
+        Test for adding a menu item when token expired
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+
+        # user login
+        login = self.login_user('Arnold', 'qwerty')
+
+        # token expires
+        time.sleep(6)
+
+        add_food_item = self.client().post(
+            '/api/v1/menu',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(login.data.decode())['auth_token']
+            ),
+            data=json.dumps(dict(
+                food_item="Katogo"
+            )),
+            content_type="application/json"
+        )
+
+        data = json.loads(add_food_item.data.decode())
+
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['message'] == 'Signature expired. Please log in again.')
+        self.assertTrue(add_food_item.content_type == 'application/json')
+        self.assertEqual(add_food_item.status_code, 401)
+
+    def test_add_menu_item_admin_malformed_token(self):
+        """
+        Test for adding a menu item when token is malformed
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+
+        # user login
+        login = self.login_user('Arnold', 'qwerty')
+
+        add_food_item = self.client().post(
+            '/api/v1/menu',
+            headers=dict(
+                Authorization='Bearer' + json.loads(login.data.decode())['auth_token']
+            ),
+            data=json.dumps(dict(
+                food_item="Katogo"
+            )),
+            content_type="application/json"
+        )
+
+        data = json.loads(add_food_item.data.decode())
+
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['message'] == 'Bearer token malformed')
+        self.assertTrue(add_food_item.content_type == 'application/json')
+        self.assertEqual(add_food_item.status_code, 401)
