@@ -122,3 +122,11 @@ class ReturnError:
             'message': 'Permission denied, Please Login as Admin'
         }
         return jsonify(response_object), 403
+
+    @staticmethod
+    def no_menu_items():
+        response_object = {
+            'status': 'successful',
+            'message': 'No menu items currently'
+        }
+        return jsonify(response_object), 200
