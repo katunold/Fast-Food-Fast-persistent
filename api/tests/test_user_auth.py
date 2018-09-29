@@ -46,6 +46,18 @@ class TestUserAuth(TestCase):
             content_type='application/json'
         )
 
+    def add_food_item(self, item_name=None, token=None):
+        return self.client().post(
+            '/api/v1/menu',
+            headers=dict(
+                Authorization='Bearer ' + token
+            ),
+            data=json.dumps(dict(
+                food_item=item_name
+            )),
+            content_type="application/json"
+        )
+
     def test_fine_user_registration(self):
         """
         Test for user registration
@@ -400,22 +412,14 @@ class TestUserAuth(TestCase):
         # user login
         login = self.login_user('Arnold', 'qwerty')
 
-        add_food_item = self.client().post(
-            '/api/v1/menu',
-            headers=dict(
-                Authorization='Bearer ' + json.loads(login.data.decode())['auth_token']
-            ),
-            data=json.dumps(dict(
-                food_item="Katogo"
-            )),
-            content_type="application/json"
-        )
+        # Add food item
+        add_item = self.add_food_item("Katogo", json.loads(login.data.decode())['auth_token'])
 
-        data = json.loads(add_food_item.data.decode())
+        data = json.loads(add_item.data.decode())
 
         self.assertTrue(data['status'] == 'success')
         self.assertTrue(data['message'] == 'Successfully Added a new food item')
-        self.assertEqual(add_food_item.status_code, 201)
+        self.assertEqual(add_item.status_code, 201)
 
     def test_add_menu_item_client(self):
         """
@@ -428,22 +432,14 @@ class TestUserAuth(TestCase):
         # user login
         login = self.login_user('Arnold', 'qwerty')
 
-        add_food_item = self.client().post(
-            '/api/v1/menu',
-            headers=dict(
-                Authorization='Bearer ' + json.loads(login.data.decode())['auth_token']
-            ),
-            data=json.dumps(dict(
-                food_item="Katogo"
-            )),
-            content_type="application/json"
-        )
+        # Add food item
+        add_item = self.add_food_item("Katogo", json.loads(login.data.decode())['auth_token'])
 
-        data = json.loads(add_food_item.data.decode())
+        data = json.loads(add_item.data.decode())
 
         self.assertTrue(data['status'] == 'fail')
         self.assertTrue(data['message'] == 'Permission denied, Please Login as Admin')
-        self.assertEqual(add_food_item.status_code, 403)
+        self.assertEqual(add_item.status_code, 403)
 
     def test_add_menu_item_admin_empty(self):
         """
@@ -456,24 +452,16 @@ class TestUserAuth(TestCase):
         # user login
         login = self.login_user('Arnold', 'qwerty')
 
-        add_food_item = self.client().post(
-            '/api/v1/menu',
-            headers=dict(
-                Authorization='Bearer ' + json.loads(login.data.decode())['auth_token']
-            ),
-            data=json.dumps(dict(
-                food_item=" "
-            )),
-            content_type="application/json"
-        )
+        # Add food item
+        add_item = self.add_food_item(" ", json.loads(login.data.decode())['auth_token'])
 
-        data = json.loads(add_food_item.data.decode())
+        data = json.loads(add_item.data.decode())
 
         self.assertTrue(data['status'] == 'fail')
         self.assertTrue(data['error_message'] == 'some of these fields have empty/no values')
         self.assertTrue(data['data'])
-        self.assertTrue(add_food_item.content_type == 'application/json')
-        self.assertEqual(add_food_item.status_code, 400)
+        self.assertTrue(add_item.content_type == 'application/json')
+        self.assertEqual(add_item.status_code, 400)
 
     def test_add_menu_item_admin_missing(self):
         """
@@ -514,24 +502,16 @@ class TestUserAuth(TestCase):
         # user login
         login = self.login_user('Arnold', 'qwerty')
 
-        add_food_item = self.client().post(
-            '/api/v1/menu',
-            headers=dict(
-                Authorization='Bearer ' + json.loads(login.data.decode())['auth_token']
-            ),
-            data=json.dumps(dict(
-                food_item=12313343
-            )),
-            content_type="application/json"
-        )
+        # Add food item
+        add_item = self.add_food_item(12345456, json.loads(login.data.decode())['auth_token'])
 
-        data = json.loads(add_food_item.data.decode())
+        data = json.loads(add_item.data.decode())
 
         self.assertTrue(data['status'] == 'fail')
         self.assertTrue(data['error_message'] == 'Only string data type supported')
         self.assertFalse(data['data'])
-        self.assertTrue(add_food_item.content_type == 'application/json')
-        self.assertEqual(add_food_item.status_code, 400)
+        self.assertTrue(add_item.content_type == 'application/json')
+        self.assertEqual(add_item.status_code, 400)
 
     def test_add_menu_item_admin_item_exists(self):
         """
@@ -545,36 +525,18 @@ class TestUserAuth(TestCase):
         login = self.login_user('Arnold', 'qwerty')
 
         # Add item for the first time
-        self.client().post(
-            '/api/v1/menu',
-            headers=dict(
-                Authorization='Bearer ' + json.loads(login.data.decode())['auth_token']
-            ),
-            data=json.dumps(dict(
-                food_item="katogo"
-            )),
-            content_type="application/json"
-        )
+        self.add_food_item("Katogo", json.loads(login.data.decode())['auth_token'])
 
-        # Add item for the second time
-        add_food_item = self.client().post(
-            '/api/v1/menu',
-            headers=dict(
-                Authorization='Bearer ' + json.loads(login.data.decode())['auth_token']
-            ),
-            data=json.dumps(dict(
-                food_item="katogo"
-            )),
-            content_type="application/json"
-        )
+        # Add food item
+        add_item = self.add_food_item("katogo", json.loads(login.data.decode())['auth_token'])
 
-        data = json.loads(add_food_item.data.decode())
+        data = json.loads(add_item.data.decode())
 
         self.assertTrue(data['status'] == 'fail')
         self.assertTrue(data['error_message'] == 'Item already exists')
         self.assertFalse(data['data'])
-        self.assertTrue(add_food_item.content_type == 'application/json')
-        self.assertEqual(add_food_item.status_code, 409)
+        self.assertTrue(add_item.content_type == 'application/json')
+        self.assertEqual(add_item.status_code, 409)
 
     def test_add_menu_item_admin_token_expired(self):
         """
@@ -590,23 +552,15 @@ class TestUserAuth(TestCase):
         # token expires
         time.sleep(6)
 
-        add_food_item = self.client().post(
-            '/api/v1/menu',
-            headers=dict(
-                Authorization='Bearer ' + json.loads(login.data.decode())['auth_token']
-            ),
-            data=json.dumps(dict(
-                food_item="Katogo"
-            )),
-            content_type="application/json"
-        )
+        # Add food item
+        add_item = self.add_food_item("katogo", json.loads(login.data.decode())['auth_token'])
 
-        data = json.loads(add_food_item.data.decode())
+        data = json.loads(add_item.data.decode())
 
         self.assertTrue(data['status'] == 'fail')
         self.assertTrue(data['message'] == 'Signature expired. Please log in again.')
-        self.assertTrue(add_food_item.content_type == 'application/json')
-        self.assertEqual(add_food_item.status_code, 401)
+        self.assertTrue(add_item.content_type == 'application/json')
+        self.assertEqual(add_item.status_code, 401)
 
     def test_add_menu_item_admin_malformed_token(self):
         """
@@ -636,3 +590,87 @@ class TestUserAuth(TestCase):
         self.assertTrue(data['message'] == 'Bearer token malformed')
         self.assertTrue(add_food_item.content_type == 'application/json')
         self.assertEqual(add_food_item.status_code, 401)
+
+    # ------------------------- Testing the Get menu endpoint ---------------------------------- #
+
+    def test_get_menu(self):
+        """
+        Test for get menu items
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+
+        # user login
+        login = self.login_user('Arnold', 'qwerty')
+
+        # Add food item
+        self.add_food_item("katogo", json.loads(login.data.decode())['auth_token'])
+
+        get_menu = self.client().get(
+            '/api/v1/menu',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(login.data.decode())['auth_token']
+            )
+        )
+
+        data = json.loads(get_menu.data.decode())
+
+        self.assertTrue(data['status'] == 'successful')
+        self.assertTrue(data['data'])
+        self.assertTrue(get_menu.content_type == 'application/json')
+        self.assertEqual(get_menu.status_code, 200)
+
+    def test_get_menu_with_more_than_one_item(self):
+        """
+        Test for get menu items
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+
+        # user login
+        login = self.login_user('Arnold', 'qwerty')
+
+        # Add food item
+        self.add_food_item("katogo", json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("Pork", json.loads(login.data.decode())['auth_token'])
+
+        get_menu = self.client().get(
+            '/api/v1/menu',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(login.data.decode())['auth_token']
+            )
+        )
+
+        data = json.loads(get_menu.data.decode())
+
+        self.assertTrue(data['status'] == 'successful')
+        self.assertTrue(data['data'])
+        self.assertTrue(get_menu.content_type == 'application/json')
+        self.assertEqual(get_menu.status_code, 200)
+
+    def test_get_empty_menu(self):
+        """
+        Test for get menu items
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+
+        # user login
+        login = self.login_user('Arnold', 'qwerty')
+
+        get_menu = self.client().get(
+            '/api/v1/menu',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(login.data.decode())['auth_token']
+            )
+        )
+
+        data = json.loads(get_menu.data.decode())
+
+        self.assertTrue(data['status'] == 'successful')
+        self.assertTrue(data['message'] == 'No menu items currently')
+        self.assertTrue(get_menu.content_type == 'application/json')
+        self.assertEqual(get_menu.status_code, 200)
