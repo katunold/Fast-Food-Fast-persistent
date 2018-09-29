@@ -15,6 +15,14 @@ CREATE TABLE production."user" (
     password character varying(255) NOT NULL
 );
 
+
+CREATE TABLE production."menu_items" (
+    item_id SERIAL NOT NULL,
+    item_name character varying(255) NOT NULL,
+    user_id integer NOT NULL FOREIGN KEY (user_id) REFERENCES production."user"(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    item_status character varying(100) NOT NULL
+);
+
 CREATE TABLE production."blacklist_token" (
     token_id SERIAL NOT NULL PRIMARY KEY,
     token character varying(500) NOT NULL,
@@ -32,6 +40,13 @@ CREATE TABLE test."user" (
     contact character varying(255) NOT NULL,
     user_type character varying(100) NOT NULL,
     password character varying(255) NOT NULL
+);
+
+CREATE TABLE test."menu_items" (
+    item_id SERIAL NOT NULL,
+    item_name character varying(255) NOT NULL,
+    user_id integer NOT NULL FOREIGN KEY (user_id) REFERENCES test."user"(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    item_status character varying(100) NOT NULL
 );
 
 CREATE TABLE test."blacklist_token" (
