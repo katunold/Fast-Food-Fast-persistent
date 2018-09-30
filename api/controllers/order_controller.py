@@ -87,11 +87,9 @@ class OrderController(MethodView):
             if not isinstance(resp, str):
 
                 if self.validate.check_user_type(resp):
-                    """
+
                     if order_id:
-                        if self.orders.find_order_by_id(order_id):
-                            pass
-                    """
+                        return self.get_single_order(order_id)
 
                     current_orders = self.orders.get_orders()
 
@@ -117,3 +115,18 @@ class OrderController(MethodView):
                 return ReturnError.invalid_user_token(resp)
         else:
             return ReturnError.user_bearer_token_error()
+
+    def get_single_order(self, order_id):
+        """
+        method to return a specific order
+        :param order_id:
+        :return:
+        """
+        single_order = self.orders.find_order_by_id(order_id)
+        if single_order:
+            response_object = {
+                'status': 'success',
+                'data': single_order.__dict__
+            }
+            return jsonify(response_object), 200
+        return ReturnError.no_order()
