@@ -48,12 +48,25 @@ class TestUserAuth(TestCase):
 
     def add_food_item(self, item_name=None, token=None):
         return self.client().post(
-            '/api/v1/menu',
+            '/api/v1/menu/',
             headers=dict(
                 Authorization='Bearer ' + token
             ),
             data=json.dumps(dict(
                 food_item=item_name
+            )),
+            content_type="application/json"
+        )
+
+    def place_order(self, order_item=None, special_notes=None, token=None):
+        return self.client().post(
+            '/api/v1/users/orders/',
+            headers=dict(
+                Authorization='Bearer ' + token
+            ),
+            data=json.dumps(dict(
+                order_item=order_item,
+                special_notes=special_notes
             )),
             content_type="application/json"
         )
@@ -674,3 +687,150 @@ class TestUserAuth(TestCase):
         self.assertTrue(data['message'] == 'No menu items currently')
         self.assertTrue(get_menu.content_type == 'application/json')
         self.assertEqual(get_menu.status_code, 200)
+
+        # ------------------------- Testing the place order endpoint ---------------------------------- #
+
+    def test_place_order_that_does_not_exist_on_menu(self):
+        """
+        Test for test for placing an order by an admin
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+
+        # user login
+        login = self.login_user('Arnold', 'qwerty')
+
+        # place order food item
+        order = self.place_order("Katogo", " ", json.loads(login.data.decode())['auth_token'])
+
+        data = json.loads(order.data.decode())
+
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['error_message'] == 'Sorry, Order item katogo not on the menu')
+        self.assertEqual(order.status_code, 400)
+
+    def test_place_order_that_is_on_menu(self):
+        """
+        Test for placing an order that is on the menu
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+
+        # user login
+        login = self.login_user('Arnold', 'qwerty')
+
+        # Add food item
+        self.add_food_item("katogo", json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("Fish fillet", json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beans", json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beef", json.loads(login.data.decode())['auth_token'])
+
+        # place order food item
+        order = self.place_order("chappatti and beef", "Please put considerable gravy",
+                                 json.loads(login.data.decode())['auth_token'])
+
+        data = json.loads(order.data.decode())
+
+        self.assertTrue(data['status'] == 'success')
+        self.assertTrue(data['message'] == 'Successfully posted an order')
+        self.assertTrue(data['data'])
+        self.assertTrue(order.content_type == 'application/json')
+        self.assertEqual(order.status_code, 201)
+
+    def test_place_order_with_missing_fields(self):
+        """
+        Test for placing an order with missing fields
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+
+        # user login
+        login = self.login_user('Arnold', 'qwerty')
+
+        # Add food item
+        self.add_food_item("katogo", json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("Fish fillet", json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beans", json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beef", json.loads(login.data.decode())['auth_token'])
+
+        # place order food item
+        order = self.client().post(
+            '/api/v1/users/orders/',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(login.data.decode())['auth_token']
+            ),
+            data=json.dumps(dict(
+                order_item="chappatti and beans"
+            )),
+            content_type="application/json"
+        )
+
+        data = json.loads(order.data.decode())
+
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['error_message'] == 'some of these fields are missing')
+        self.assertTrue(data['data'])
+        self.assertTrue(order.content_type == 'application/json')
+        self.assertEqual(order.status_code, 400)
+
+    def test_place_order_with_invalid_data_type(self):
+        """
+        Test for placing an order with invalid data
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+
+        # user login
+        login = self.login_user('Arnold', 'qwerty')
+
+        # Add food item
+        self.add_food_item("katogo", json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("Fish fillet", json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beans", json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beef", json.loads(login.data.decode())['auth_token'])
+
+        # place order food item
+        order = self.place_order(5252644268624, "Please put considerable gravy",
+                                 json.loads(login.data.decode())['auth_token'])
+
+        data = json.loads(order.data.decode())
+
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['error_message'] == 'Only string data type supported')
+        self.assertFalse(data['data'])
+        self.assertTrue(order.content_type == 'application/json')
+        self.assertEqual(order.status_code, 400)
+
+    def test_place_order_with_empty_order_item(self):
+        """
+        Test for placing an order with empty data fields
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+
+        # user login
+        login = self.login_user('Arnold', 'qwerty')
+
+        # Add food item
+        self.add_food_item("katogo", json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("Fish fillet", json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beans", json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beef", json.loads(login.data.decode())['auth_token'])
+
+        # place order food item
+        order = self.place_order("", "Please put considerable gravy",
+                                 json.loads(login.data.decode())['auth_token'])
+
+        data = json.loads(order.data.decode())
+
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['error_message'] == 'some of these fields have empty/no values')
+        self.assertTrue(data['data'])
+        self.assertTrue(order.content_type == 'application/json')
+        self.assertEqual(order.status_code, 400)
+
