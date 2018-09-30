@@ -987,3 +987,91 @@ class TestUserAuth(TestCase):
         self.assertTrue(data['data'])
         self.assertTrue(get_orders.content_type == 'application/json')
         self.assertEqual(get_orders.status_code, 200)
+
+    # ------------------------- Testing the get a specific order endpoint ---------------------------------- #
+
+    def test_get_a_specific_order_not_existing(self):
+        """
+        Test for getting the only existing order
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+        self.register_user('Samson', 'sam@gmail.com', '07061806720', 'qwerty', 'Client')
+
+        # user login
+        login_admin = self.login_user('Arnold', 'qwerty')
+        login_client = self.login_user('Samson', 'qwerty')
+
+        # Add food item
+        self.add_food_item("katogo", json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("Fish fillet", json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beans", json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beef", json.loads(login_admin.data.decode())['auth_token'])
+
+        # place order food item
+        self.place_order("chappatti and beef", "Please put considerable gravy",
+                         json.loads(login_client.data.decode())['auth_token'])
+        self.place_order("chappatti and beans", "Please put enough soup",
+                         json.loads(login_client.data.decode())['auth_token'])
+        self.place_order("katogo", "I want katogo of cassava and beans",
+                         json.loads(login_admin.data.decode())['auth_token'])
+
+        get_orders = self.client().get(
+            '/api/v1/orders/2/',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(login_admin.data.decode())['auth_token']
+            )
+        )
+
+        data = json.loads(get_orders.data.decode())
+
+        print(data)
+
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['message'] == 'Order not found')
+        self.assertTrue(get_orders.content_type == 'application/json')
+        self.assertEqual(get_orders.status_code, 404)
+
+    def test_ab_get_a_specific_order(self):
+        """
+        Test for getting the only existing order
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+        self.register_user('Samson', 'sam@gmail.com', '07061806720', 'qwerty', 'Client')
+
+        # user login
+        login_admin = self.login_user('Arnold', 'qwerty')
+        login_client = self.login_user('Samson', 'qwerty')
+
+        # Add food item
+        self.add_food_item("katogo", json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("Fish fillet", json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beans", json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beef", json.loads(login_admin.data.decode())['auth_token'])
+
+        # place order food item
+        self.place_order("chappatti and beef", "Please put considerable gravy",
+                         json.loads(login_client.data.decode())['auth_token'])
+        self.place_order("chappatti and beans", "Please put enough soup",
+                         json.loads(login_client.data.decode())['auth_token'])
+        self.place_order("katogo", "I want katogo of cassava and beans",
+                         json.loads(login_admin.data.decode())['auth_token'])
+
+        get_orders = self.client().get(
+            '/api/v1/orders/2/',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(login_admin.data.decode())['auth_token']
+            )
+        )
+
+        data = json.loads(get_orders.data.decode())
+
+        print(data)
+
+        self.assertTrue(data['status'] == 'success')
+        self.assertTrue(data['data'])
+        self.assertTrue(get_orders.content_type == 'application/json')
+        self.assertEqual(get_orders.status_code, 200)
