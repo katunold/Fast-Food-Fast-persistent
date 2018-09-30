@@ -23,9 +23,9 @@ CREATE TABLE production."menu_items" (
     item_status character varying(100) NOT NULL
 );
 
-CREATE TABLE production."orders" (
+CREATE TABLE production."order" (
     order_id SERIAL NOT NULL PRIMARY KEY,
-    user_id integer NOT NULL NOT NULL REFERENCES production."user"(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    user_id integer NOT NULL REFERENCES production."user"(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
     order_item character varying(255) NOT NULL,
     special_notes text NOT NULL,
     order_date timestamp(6) without time zone NOT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE test."menu_items" (
     item_status character varying(100) NOT NULL
 );
 
-CREATE TABLE test."orders" (
+CREATE TABLE test."order" (
     order_id SERIAL NOT NULL PRIMARY KEY,
     user_id integer NOT NULL REFERENCES test."user"(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
     order_item character varying(255) NOT NULL,
