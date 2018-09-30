@@ -27,7 +27,7 @@ class Orders(metaclass=Singleton):
     """
      Define token module attributes accessed by callers
      """
-    _table_ = "order"
+    _table_ = "orders"
     _database_ = DatabaseConnection()
     menu = FoodItems()
 

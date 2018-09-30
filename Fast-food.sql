@@ -23,7 +23,7 @@ CREATE TABLE production."menu_items" (
     item_status character varying(100) NOT NULL
 );
 
-CREATE TABLE production."order" (
+CREATE TABLE production.orders (
     order_id SERIAL NOT NULL PRIMARY KEY,
     user_id integer NOT NULL REFERENCES production."user"(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
     order_item character varying(255) NOT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE test."menu_items" (
     item_status character varying(100) NOT NULL
 );
 
-CREATE TABLE test."order" (
+CREATE TABLE test.orders (
     order_id SERIAL NOT NULL PRIMARY KEY,
     user_id integer NOT NULL REFERENCES test."user"(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
     order_item character varying(255) NOT NULL,
