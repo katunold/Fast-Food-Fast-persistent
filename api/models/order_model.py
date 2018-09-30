@@ -79,8 +79,8 @@ class Orders(metaclass=Singleton):
                 del order_data.item_id
                 return order_data
         return None
-    """
-        def find_order_by_id(self, order_id): 
+
+    def find_order_by_id(self, order_id):
         criteria = {'order_id': order_id}
         res = self._database_.find(self._table_, criteria=criteria)
         if res and isinstance(res, dict):
@@ -92,5 +92,3 @@ class Orders(metaclass=Singleton):
             del order_data.item_id
             return order_data
         return None
-    """
-
