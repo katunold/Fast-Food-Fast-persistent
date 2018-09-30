@@ -61,7 +61,7 @@ CREATE TABLE test."menu_items" (
 
 CREATE TABLE test."orders" (
     order_id SERIAL NOT NULL PRIMARY KEY,
-    user_id integer NOT NULL NOT NULL REFERENCES production."user"(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    user_id integer NOT NULL REFERENCES production."user"(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
     order_item character varying(255) NOT NULL,
     special_notes text NOT NULL,
     order_date timestamp(6) without time zone NOT NULL,
