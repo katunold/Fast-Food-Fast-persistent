@@ -71,3 +71,49 @@ class OrderController(MethodView):
         else:
             return ReturnError.user_bearer_token_error()
 
+    def get(self, order_id=None):
+        """
+        Method to return all existing orders
+        :return:
+        """
+
+        # get auth_token
+        auth_header = request.headers.get('Authorization')
+        if self.validate.check_auth_header(auth_header):
+            auth_token = self.validate.check_auth_header(auth_header)
+
+            resp = self.auth.decode_auth_token(auth_token)
+
+            if not isinstance(resp, str):
+
+                if self.validate.check_user_type(resp):
+                    """
+                    if order_id:
+                        if self.orders.find_order_by_id(order_id):
+                            pass
+                    """
+
+                    current_orders = self.orders.get_orders()
+
+                    if current_orders:
+                        if isinstance(current_orders, list) and len(current_orders) > 0:
+                            response_object = {
+                                "status": "success",
+                                "data": [obj.__dict__ for obj in current_orders]
+                            }
+                            return jsonify(response_object), 200
+                        elif isinstance(current_orders, object):
+
+                            response_object = {
+                                "status": "success",
+                                "data": [current_orders.__dict__]
+                            }
+                            return jsonify(response_object), 200
+                    else:
+                        return ReturnError.no_items('order')
+
+                return ReturnError.denied_permission()
+            else:
+                return ReturnError.invalid_user_token(resp)
+        else:
+            return ReturnError.user_bearer_token_error()
