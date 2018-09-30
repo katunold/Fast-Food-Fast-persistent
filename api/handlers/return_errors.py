@@ -139,4 +139,12 @@ class ReturnError:
         }
         return jsonify(response_object), 200
 
+    @staticmethod
+    def no_order():
+        return jsonify({
+            "status": "fail",
+            "message": "Order not found",
+            "data": False
+        }), 404
+
 
