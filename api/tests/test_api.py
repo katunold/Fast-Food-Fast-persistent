@@ -946,6 +946,8 @@ class TestUserAuth(TestCase):
 
         data = json.loads(get_orders.data.decode())
 
+        print(data)
+
         self.assertTrue(data['status'] == 'successful')
         self.assertTrue(data['message'] == 'No order items currently')
         self.assertTrue(get_orders.content_type == 'application/json')
