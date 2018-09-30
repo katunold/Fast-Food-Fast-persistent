@@ -99,6 +99,6 @@ class MenuController(MethodView):
                         }
                         return jsonify(response_object), 200
                 else:
-                    return ReturnError.no_menu_items()
+                    return ReturnError.no_items('menu')
         else:
             return ReturnError.user_bearer_token_error()
