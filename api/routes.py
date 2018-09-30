@@ -4,6 +4,7 @@ Urls class , to handel request urls,
 from api.controllers.login_controller import LoginController
 from api.controllers.logout_controller import LogoutController
 from api.controllers.menu_controller import MenuController
+from api.controllers.order_controller import OrderController
 from api.controllers.sign_up_controller import SignUpController
 
 
@@ -30,3 +31,7 @@ class Urls:
                          methods=['POST'], strict_slashes=False)
         app.add_url_rule('/api/v1/menu', view_func=MenuController.as_view('get_menu'),
                          methods=['GET'], strict_slashes=False)
+
+        """Order routes"""
+        app.add_url_rule('/api/v1/users/orders', view_func=OrderController.as_view('post_order'),
+                         methods=['POST'], strict_slashes=False)
