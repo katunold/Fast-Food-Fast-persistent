@@ -132,9 +132,11 @@ class ReturnError:
         return jsonify(response_object), 403
 
     @staticmethod
-    def no_menu_items():
+    def no_items(item):
         response_object = {
             'status': 'successful',
-            'message': 'No menu items currently'
+            'message': 'No {} items currently'.format(item)
         }
         return jsonify(response_object), 200
+
+
