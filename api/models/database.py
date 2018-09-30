@@ -128,5 +128,8 @@ class DatabaseConnection(metaclass=Singleton):
         :return:
         """
         cur = self._conn_.cursor()
+        cur.execute("""DELETE FROM test.menu_items""")
+        cur.execute("""DELETE FROM test.orders""")
         cur.execute("""DELETE FROM test.user""")
+        cur.execute("""DELETE FROM test.blacklist_token""")
         self._conn_.commit()
