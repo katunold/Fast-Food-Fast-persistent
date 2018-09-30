@@ -83,6 +83,14 @@ class ReturnError:
         return jsonify(response_object), 409
 
     @staticmethod
+    def item_not_on_the_menu(order_item):
+        response_object = {
+            'status': 'fail',
+            'error_message': 'Sorry, Order item {} not on the menu'.format(order_item)
+        }
+        return jsonify(response_object), 400
+
+    @staticmethod
     def invalid_name():
         return jsonify({
             "status": "fail",
