@@ -35,3 +35,5 @@ class Urls:
         """Order routes"""
         app.add_url_rule('/api/v1/users/orders', view_func=OrderController.as_view('post_order'),
                          methods=['POST'], strict_slashes=False)
+        app.add_url_rule('/api/v1/orders', view_func=OrderController.as_view('get_orders'),
+                         methods=['GET'], strict_slashes=False)
