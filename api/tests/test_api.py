@@ -1230,7 +1230,7 @@ class TestUserAuth(TestCase):
 
     # ------------------------- Testing the update order status endpoint ---------------------------------- #
 
-    def test_aba_update_order_status(self):
+    def test_aab_update_order_status(self):
         """
         Test for getting the the order history
         :return:
