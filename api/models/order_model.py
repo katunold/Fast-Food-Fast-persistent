@@ -80,6 +80,38 @@ class Orders(metaclass=Singleton):
                 return order_data
         return None
 
+    def order_history(self, user_id) -> [OrderModel]:
+        """
+        Get order history of a user
+        :return:
+        """
+        criteria = {'user_id': user_id}
+        response = self._database_.find(self._table_, criteria=criteria)
+
+        if response:
+            if isinstance(response, list) and len(response) > 1:
+                data: List[OrderModel] = []
+                for res in response:
+                    order_data = OrderModel(res['order_id'], res['order_item'], res['special_notes'])
+                    order_data.item_id = res['item_id']
+                    order_data.order_id = res['order_id']
+                    order_data.order_date = res['order_date']
+                    order_data.order_status = res['order_status']
+                    del order_data.item_id
+                    data.append(order_data)
+                return data
+            elif isinstance(response, dict) or (isinstance(response, list) and len(response) == 1):
+                if isinstance(response, list):
+                    response = response[0]
+                order_data = OrderModel(response['order_id'], response['order_item'], response['special_notes'])
+                order_data.item_id = response['item_id']
+                order_data.order_id = response['order_id']
+                order_data.order_date = response['order_date']
+                order_data.order_status = response['order_status']
+                del order_data.item_id
+                return order_data
+        return None
+
     def find_order_by_id(self, order_id):
         criteria = {'order_id': order_id}
         res = self._database_.find(self._table_, criteria=criteria)
