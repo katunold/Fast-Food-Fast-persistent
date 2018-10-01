@@ -130,3 +130,43 @@ class OrderController(MethodView):
             }
             return jsonify(response_object), 200
         return ReturnError.no_order()
+
+    def put(self, order_id):
+        """
+        Method to update an order status
+        :return:
+        """
+
+        # get auth_token
+        auth_header = request.headers.get('Authorization')
+        if self.validate.check_auth_header(auth_header):
+            auth_token = self.validate.check_auth_header(auth_header)
+
+            resp = self.auth.decode_auth_token(auth_token)
+
+            if not isinstance(resp, str):
+                if self.validate.check_user_type(resp):
+                    post_data = request.get_json()
+
+                    key = "order_status"
+
+                    status = ['new', 'processing', 'cancelled', 'completed']
+
+                    if key not in post_data:
+                        return ReturnError.missing_fields(key)
+                    try:
+                        order_status = post_data['order_status'].strip()
+                    except AttributeError:
+                        return ReturnError.invalid_data_type()
+
+                    if order_status.lower() not in status:
+                        return ReturnError.order_status_not_found(order_status)
+                    if self.orders.find_order_by_id(order_id):
+                        return self.orders.update_order(order_id, order_status)
+                    return ReturnError.no_items('order')
+
+                return ReturnError.denied_permission()
+            else:
+                return ReturnError.invalid_user_token(resp)
+        else:
+            return ReturnError.user_bearer_token_error()
