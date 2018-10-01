@@ -4,6 +4,8 @@ Module for order model
 import datetime
 from typing import List
 
+from flask import jsonify
+
 from api.models.database import DatabaseConnection
 from api.models.food_item_model import FoodItems
 from api.utils.singleton import Singleton
@@ -124,3 +126,17 @@ class Orders(metaclass=Singleton):
             del order_data.item_id
             return order_data
         return None
+
+    def update_order(self, order_id, order_status):
+        selection = {
+            'order_id': order_id
+        }
+        new_update = {
+            'order_status': order_status
+        }
+        self._database_.update(self._database_, selection, new_update)
+        response_object = {
+            'status': 'success',
+            'message': 'Status has been updated'
+        }
+        return jsonify(response_object), 202
