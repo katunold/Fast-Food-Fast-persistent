@@ -1230,7 +1230,7 @@ class TestUserAuth(TestCase):
 
     # ------------------------- Testing the update order status endpoint ---------------------------------- #
 
-    def test_update_order_status(self):
+    def test_aba_update_order_status(self):
         """
         Test for getting the the order history
         :return:
@@ -1272,7 +1272,7 @@ class TestUserAuth(TestCase):
 
         print(data)
 
-        self.assertTrue(data['status'] == 'successful')
+        self.assertTrue(data['status'] == 'success')
         self.assertTrue(data['message'] == 'Status has been updated')
         self.assertTrue(update_order.content_type == 'application/json')
         self.assertEqual(update_order.status_code, 202)
