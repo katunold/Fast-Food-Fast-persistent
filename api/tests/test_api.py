@@ -1272,7 +1272,7 @@ class TestUserAuth(TestCase):
 
         print(data)
 
-        self.assertTrue(data['status'] == 'success')
+        self.assertTrue(data['status'] == 'successful')
         self.assertTrue(data['message'] == 'Status has been updated')
         self.assertTrue(update_order.content_type == 'application/json')
         self.assertEqual(update_order.status_code, 202)
