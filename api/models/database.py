@@ -122,6 +122,32 @@ class DatabaseConnection(metaclass=Singleton):
                 return val
         return None
 
+    def update(self, table_name, selection, update):
+        """
+        Handles update queries
+        :param table_name:
+        :param selection:
+        :param update:
+        :return:
+        """
+
+        _top = f"""UPDATE {self.schema}.{table_name} SET """
+
+        vals = ", ".join([f""" "{col1}"='{val1}' """ for col1, val1 in update.items()])
+
+        middle = """ WHERE """
+
+        cols = " AND ".join([f""" "{col}"='{val}' """ for col, val in selection.items()])
+
+        sql = _top + vals + middle + cols
+
+        cur = self._conn_.cursor()
+        cur.execute(sql)
+        self._conn_.commit()
+        if cur:
+            return cur
+        return None
+
     def drop_test_schema(self):
         """
         delete test schema after using it
