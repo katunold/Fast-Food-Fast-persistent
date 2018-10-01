@@ -39,5 +39,7 @@ class Urls:
                          methods=['GET'], strict_slashes=False)
         app.add_url_rule('/api/v1/orders/<int:order_id>', view_func=OrderController.as_view('get_an_order'),
                          methods=['GET'], strict_slashes=False)
+        app.add_url_rule('/api/v1/orders/<int:order_id>', view_func=OrderController.as_view('update_order_status'),
+                         methods=['PUT'], strict_slashes=False)
         app.add_url_rule('/api/v1/users/orders', view_func=LoginController.as_view('order_history'),
                          methods=['GET'], strict_slashes=False)
