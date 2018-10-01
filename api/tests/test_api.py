@@ -1026,8 +1026,6 @@ class TestUserAuth(TestCase):
 
         data = json.loads(get_orders.data.decode())
 
-        print(data)
-
         self.assertTrue(data['status'] == 'fail')
         self.assertTrue(data['message'] == 'Order not found')
         self.assertTrue(get_orders.content_type == 'application/json')
@@ -1069,9 +1067,163 @@ class TestUserAuth(TestCase):
 
         data = json.loads(get_orders.data.decode())
 
-        print(data)
+        self.assertTrue(data['status'] == 'success')
+        self.assertTrue(data['data'])
+        self.assertTrue(get_orders.content_type == 'application/json')
+        self.assertEqual(get_orders.status_code, 200)
+
+    # ------------------------- Testing the get order history endpoint ---------------------------------- #
+
+    def test_get_single_order_in_order_history(self):
+        """
+        Test for getting the the order history
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+        self.register_user('Samson', 'sam@gmail.com', '07061806720', 'qwerty', 'Client')
+
+        # user login
+        login_admin = self.login_user('Arnold', 'qwerty')
+        login_client = self.login_user('Samson', 'qwerty')
+
+        # Add food item
+        self.add_food_item("katogo", json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("Fish fillet", json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beans", json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beef", json.loads(login_admin.data.decode())['auth_token'])
+
+        # place order food item
+        self.place_order("chappatti and beef", "Please put considerable gravy",
+                         json.loads(login_client.data.decode())['auth_token'])
+
+        get_orders = self.client().get(
+            '/api/v1/users/orders',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(login_client.data.decode())['auth_token']
+            )
+        )
+
+        data = json.loads(get_orders.data.decode())
 
         self.assertTrue(data['status'] == 'success')
         self.assertTrue(data['data'])
         self.assertTrue(get_orders.content_type == 'application/json')
         self.assertEqual(get_orders.status_code, 200)
+
+    def test_get_many_orders_in_order_history(self):
+        """
+        Test for getting the the order history
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+        self.register_user('Samson', 'sam@gmail.com', '07061806720', 'qwerty', 'Client')
+
+        # user login
+        login_admin = self.login_user('Arnold', 'qwerty')
+        login_client = self.login_user('Samson', 'qwerty')
+
+        # Add food item
+        self.add_food_item("katogo", json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("Fish fillet", json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beans", json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beef", json.loads(login_admin.data.decode())['auth_token'])
+
+        # place order food item
+        self.place_order("chappatti and beef", "Please put considerable gravy",
+                         json.loads(login_client.data.decode())['auth_token'])
+        self.place_order("chappatti and beans", "Please put enough soup",
+                         json.loads(login_client.data.decode())['auth_token'])
+        self.place_order("katogo", "I want katogo of cassava and beans",
+                         json.loads(login_client.data.decode())['auth_token'])
+
+        get_orders = self.client().get(
+            '/api/v1/users/orders',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(login_client.data.decode())['auth_token']
+            )
+        )
+
+        data = json.loads(get_orders.data.decode())
+
+        self.assertTrue(data['status'] == 'success')
+        self.assertTrue(data['data'])
+        self.assertTrue(get_orders.content_type == 'application/json')
+        self.assertEqual(get_orders.status_code, 200)
+
+    def test_get_order_history_malformed_bearer_token(self):
+        """
+        Test for user status with malformed bearer token
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+        self.register_user('Samson', 'sam@gmail.com', '07061806720', 'qwerty', 'Client')
+
+        # user login
+        login_admin = self.login_user('Arnold', 'qwerty')
+        login_client = self.login_user('Samson', 'qwerty')
+
+        # Add food item
+        self.add_food_item("katogo", json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("Fish fillet", json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beans", json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beef", json.loads(login_admin.data.decode())['auth_token'])
+
+        # place order food item
+        self.place_order("chappatti and beef", "Please put considerable gravy",
+                         json.loads(login_client.data.decode())['auth_token'])
+        self.place_order("chappatti and beans", "Please put enough soup",
+                         json.loads(login_client.data.decode())['auth_token'])
+        self.place_order("katogo", "I want katogo of cassava and beans",
+                         json.loads(login_client.data.decode())['auth_token'])
+
+        response = self.client().post(
+            '/api/v1/users/orders',
+            headers=dict(
+                Authorization='Bearer' + json.loads(login_client.data.decode())['auth_token']
+            )
+        )
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['message'] == 'Bearer token malformed')
+        self.assertEqual(response.status_code, 401)
+
+    def test_get_order_history_invalid_token(self):
+        """
+        Test for user status with invalid token
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+        self.register_user('Samson', 'sam@gmail.com', '07061806720', 'qwerty', 'Client')
+
+        # user login
+        login_admin = self.login_user('Arnold', 'qwerty')
+        login_client = self.login_user('Samson', 'qwerty')
+
+        # Add food item
+        self.add_food_item("katogo", json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("Fish fillet", json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beans", json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beef", json.loads(login_admin.data.decode())['auth_token'])
+
+        # place order food item
+        self.place_order("chappatti and beef", "Please put considerable gravy",
+                         json.loads(login_client.data.decode())['auth_token'])
+        self.place_order("chappatti and beans", "Please put enough soup",
+                         json.loads(login_client.data.decode())['auth_token'])
+        self.place_order("katogo", "I want katogo of cassava and beans",
+                         json.loads(login_client.data.decode())['auth_token'])
+
+        response = self.client().post(
+            '/api/v1/users/orders',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(login_client.data.decode())['auth_token'] + 'invalid'
+            )
+        )
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['message'] == 'Invalid token. Please log in again.')
+        self.assertEqual(response.status_code, 401)
