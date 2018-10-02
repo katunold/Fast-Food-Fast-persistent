@@ -1270,8 +1270,6 @@ class TestUserAuth(TestCase):
 
         data = json.loads(update_order.data.decode())
 
-        print(data)
-
         self.assertTrue(data['status'] == 'success')
         self.assertTrue(data['message'] == 'Status has been updated')
         self.assertTrue(update_order.content_type == 'application/json')
