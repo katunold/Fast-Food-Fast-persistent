@@ -134,7 +134,7 @@ class Orders(metaclass=Singleton):
         new_update = {
             'order_status': order_status
         }
-        self._database_.update(self._database_, selection, new_update)
+        self._database_.update(self._table_, selection, new_update)
         response_object = {
             'status': 'success',
             'message': 'Status has been updated'

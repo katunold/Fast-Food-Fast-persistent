@@ -130,7 +130,6 @@ class DatabaseConnection(metaclass=Singleton):
         :param update:
         :return:
         """
-
         _top = f"""UPDATE {self.schema}.{table_name} SET """
 
         vals = ", ".join([f""" "{col1}"='{val1}' """ for col1, val1 in update.items()])
