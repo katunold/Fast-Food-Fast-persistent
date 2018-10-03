@@ -1,0 +1,23 @@
+user_order_history.yml
+---
+tags:
+- Fast Food Orders
+responses:
+  200:
+    description: User is able to view all orders.
+parameters:
+      - name: auth
+        in: header
+        name: Authorization
+        description: an authorization header
+        required: true
+        type: string
+security:
+  - JWT:
+      description: Pass in jwt token. i.e Bearer <jwt>
+      type: apiKey
+      scheme: bearer
+      name: Authorization
+      in: header
+      template: "Bearer {apiKey}"
+      bearerFormat: JWT

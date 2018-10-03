@@ -1,0 +1,13 @@
+signin
+---
+tags:
+- User signin
+parameters:
+  - in: body
+    name: body
+    required: true
+    type: string
+    description: This route is used to login a user to his accout.
+responses:
+  200:
+    description: User successfully logs in to his account
