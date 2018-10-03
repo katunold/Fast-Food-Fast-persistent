@@ -18,11 +18,11 @@ class BaseConfig:
     SECRET_KEY = os.urandom(24).hex()
     DEBUG = False
     BCRYPT_LOG_ROUNDS = 13
-    HOST = "127.0.0.1"
+    HOST = "ec2-23-23-80-20.compute-1.amazonaws.com"  # 0.0.0.0.5000
     PORT = "5432"
-    DATABASE = "Fast-Food"
-    USER = "postgres"
-    PASSWORD = "qwerty"
+    DATABASE = "dc09id3sq3n8v9"  # Fast-Food
+    USER = "nnmmzuxramdvkg"  # postgres
+    PASSWORD = "b66b5c6610aa107101f45b1ed65fdf579d28336eede8595b3aca8ceed17c6bae"  # qwerty
 
 
 class DevelopmentConfig(BaseConfig):
