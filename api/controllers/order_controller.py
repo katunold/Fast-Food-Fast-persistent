@@ -1,6 +1,7 @@
 """
 Module to handle menu logic
 """
+from flasgger import swag_from
 from flask import request, jsonify
 from flask.views import MethodView
 
@@ -23,6 +24,7 @@ class OrderController(MethodView):
     menu = FoodItems()
     orders = Orders()
 
+    @swag_from('../docs/post_order.yml')
     def post(self):
         """
         Method to post an order
@@ -71,6 +73,7 @@ class OrderController(MethodView):
         else:
             return ReturnError.user_bearer_token_error()
 
+    @swag_from('../docs/view_all_orders.yml')
     def get(self, order_id=None):
         """
         Method to return all existing orders
@@ -131,6 +134,7 @@ class OrderController(MethodView):
             return jsonify(response_object), 200
         return ReturnError.no_order()
 
+    @swag_from('../docs/update_order_status.yml')
     def put(self, order_id):
         """
         Method to update an order status

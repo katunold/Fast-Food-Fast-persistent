@@ -1,7 +1,7 @@
 """
 View module for user login
 """
-
+from flasgger import swag_from
 from flask import request, jsonify
 from flask.views import MethodView
 
@@ -21,6 +21,7 @@ class LoginController(MethodView):
     auth = Authenticate
     orders = Orders()
 
+    @swag_from('../docs/signin.yml')
     def post(self):
         # get post data
         post_data = request.get_json()
@@ -56,6 +57,7 @@ class LoginController(MethodView):
             }
             return jsonify(response_object), 404
 
+    @swag_from('../docs/user_order_history.yml')
     def get(self):
         """
         Method to return the order history of a user

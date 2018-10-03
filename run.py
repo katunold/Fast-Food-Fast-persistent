@@ -1,6 +1,7 @@
 """
 Main app root of the api endpoints
 """
+from flasgger import Swagger
 from flask import Flask
 
 from api.config.config import DevelopmentConfig, HostConfig
@@ -16,6 +17,7 @@ class Server:
     @staticmethod
     def create_app(env=None):
         app = Flask(__name__)
+        Swagger(app)
         app.config.update(env.__dict__ or {})
         Urls.generate(app)
 

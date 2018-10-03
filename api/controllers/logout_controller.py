@@ -1,6 +1,7 @@
 """
 Module to handle user logout
 """
+from flasgger import swag_from
 from flask import request, jsonify
 from flask.views import MethodView
 
@@ -15,6 +16,7 @@ class LogoutController(MethodView):
     Logout class with methods to handle user logout
     """
 
+    @swag_from('../docs/signout.yml')
     def post(self):
         # get auth_token
         auth_header = request.headers.get('Authorization')

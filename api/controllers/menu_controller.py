@@ -1,6 +1,7 @@
 """
 Module to handle menu logic
 """
+from flasgger import swag_from
 from flask import request, jsonify
 from flask.views import MethodView
 
@@ -19,6 +20,7 @@ class MenuController(MethodView):
     auth = Authenticate
     food_model = FoodItems()
 
+    @swag_from('../docs/add_menu_item.yml')
     def post(self):
         """
         Method to post a menu item
@@ -68,6 +70,7 @@ class MenuController(MethodView):
         else:
             return ReturnError.user_bearer_token_error()
 
+    @swag_from('../docs/view_menu_items.yml')
     def get(self):
         """
         Method to return existing menu items

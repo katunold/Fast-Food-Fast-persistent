@@ -3,6 +3,7 @@ module to handle user sign-up logic
 """
 import copy
 
+from flasgger import swag_from
 from flask import request, jsonify
 from flask.views import MethodView
 
@@ -19,6 +20,7 @@ class SignUpController(MethodView):
     _user_ = Users()
     validate = Validators()
 
+    @swag_from('../docs/signup.yml')
     def post(self):
 
         post_data = request.get_json()

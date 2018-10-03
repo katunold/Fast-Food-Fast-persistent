@@ -60,7 +60,7 @@ class TestUserAuth(TestCase):
 
     def place_order(self, order_item=None, special_notes=None, token=None):
         return self.client().post(
-            '/api/v1/users/orders/',
+            '/api/v1/orders',
             headers=dict(
                 Authorization='Bearer ' + token
             ),
