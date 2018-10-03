@@ -53,7 +53,7 @@ class MenuController(MethodView):
                         return ReturnError.empty_fields()
                     elif not self.validate.validate_name(self.food_item):
                         return ReturnError.invalid_name()
-                    elif self.validate.check_item_name(self.food_item):
+                    elif self.validate.check_item_name(self.food_item.lower()):
                         return ReturnError.item_already_exists()
 
                     food_data = self.food_model.add_food_item(self.food_item.lower(), resp)
