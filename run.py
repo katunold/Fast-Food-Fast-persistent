@@ -2,7 +2,7 @@
 Main app root of the api endpoints
 """
 from flasgger import Swagger
-from flask import Flask
+from flask import Flask, redirect
 
 from api.config.config import DevelopmentConfig, HostConfig
 from api.models.database import DatabaseConnection
@@ -28,6 +28,12 @@ class Server:
 
 
 APP = Server().create_app(env=DevelopmentConfig)
+
+
+@APP.route("/")
+def main():
+    return redirect('/apidocs')
+
 
 if __name__ == '__main__':
     APP.run(host=HostConfig.HOST, port=HostConfig.PORT)
