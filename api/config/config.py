@@ -18,7 +18,7 @@ class BaseConfig:
     SECRET_KEY = os.urandom(24).hex()
     DEBUG = False
     BCRYPT_LOG_ROUNDS = 13
-    HOST = "ec2-23-23-80-20.compute-1.amazonaws.com"  # 0.0.0.0.5000
+    HOST = "ec2-23-23-80-20.compute-1.amazonaws.com"  # 127.0.0.1
     PORT = "5432"
     DATABASE = "dc09id3sq3n8v9"  # Fast-Food
     USER = "nnmmzuxramdvkg"  # postgres
