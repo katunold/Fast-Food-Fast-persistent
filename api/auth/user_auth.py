@@ -27,7 +27,7 @@ class Authenticate(metaclass=Singleton):
         """
         try:
             payload = {
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=1440),
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=5),
                 'iat': datetime.datetime.utcnow(),
                 'sub': user_id
             }
