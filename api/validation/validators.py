@@ -127,6 +127,6 @@ class Validators:
         :param item_name:
         :return:
         """
-        if self.food_item.find_item_by_name(item_name):
+        if self.food_item.find_item_by_name(item_name.lower()):
             return True
         return False

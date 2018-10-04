@@ -53,7 +53,6 @@ class OrderController(MethodView):
                     return ReturnError.invalid_data_type()
                 if not self.special_notes:
                     self.special_notes = "No special notes attached"
-
                 if not self.order_item:
                     return ReturnError.empty_fields()
                 elif not self.validate.check_item_name(self.order_item):

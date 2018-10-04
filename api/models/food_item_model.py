@@ -81,7 +81,16 @@ class FoodItems(metaclass=Singleton):
         """
         criteria = {'item_name': item_name}
         res = self._database_.find(self._table_, criteria=criteria)
-        if res and isinstance(res, dict):
+        if res and isinstance(res, list):
+            data: List[FoodItemModel] = []
+            for res in res:
+                item_data = FoodItemModel(res['item_name'], res['user_id'])
+                item_data.item_status = res['item_status']
+                item_data.item_id = res['item_id']
+                del item_data.user_id
+                data.append(item_data)
+            return data
+        elif isinstance(res, dict):
             item_data = FoodItemModel(res['item_name'], res['user_id'])
             item_data.item_id = res["item_id"]
             item_data.item_status = res['item_status']
