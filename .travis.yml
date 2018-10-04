@@ -13,7 +13,7 @@ script:
 - coverage xml
 - coveralls
 before_script:
-- psql -U nnmmzuxramdvkg -f Fast-food.sql
+- psql -U postgres -f Fast-food.sql
 
 
 #- ./cc-test-reporter before-build"
