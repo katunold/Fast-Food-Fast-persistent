@@ -1,10 +1,7 @@
-update_order_status.yml
+update_order_status
 ---
 tags:
 - Fast Food Orders
-responses:
-  200:
-    description: User is able to post an order here.
 parameters:
       - name: auth
         in: header
@@ -23,6 +20,19 @@ parameters:
       - name: order_id
         in: path
         description: ID of the order to update
+responses:
+  200:
+    description: Admin updates the order status.
+  403:
+    description: Permission denied; Login as admin (Forbidden)
+  400:
+    description: Inappropriate request (Bad Request)
+    schema:
+      id: Update order status
+      properties:
+        order_status:
+          type: string
+          default: new
 security:
   - JWT:
       description: Pass in jwt token. i.e Bearer <jwt>

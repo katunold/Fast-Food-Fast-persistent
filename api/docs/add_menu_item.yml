@@ -1,10 +1,7 @@
-add_menu_item.yml
+add_menu_item
 ---
 tags:
 - Fast Food Menu
-responses:
-  200:
-    description: Admin Is able to add another menu item from here.
 parameters:
       - name: auth
         in: header
@@ -19,6 +16,21 @@ parameters:
         description: admin adds menu item here
         required: true
         type: string
+responses:
+  200:
+    description: Admin Is able to add another menu item from here.
+    schema:
+      id: Add Menu Item
+      properties:
+        food_item:
+          type: string
+          default: item name
+  409:
+    description: Item already exists (Conflict).
+  400:
+    description: Request was inappropriate (Bad Request).
+  403:
+    description: Only admin can add menu item (Forbidden).
 security:
   - JWT:
       description: Pass in jwt token. i.e Bearer <jwt>

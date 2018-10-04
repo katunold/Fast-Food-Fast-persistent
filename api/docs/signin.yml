@@ -1,7 +1,7 @@
 signin
 ---
 tags:
-- User signin
+- User Signup and Login
 parameters:
   - in: body
     name: body
@@ -10,4 +10,16 @@ parameters:
     description: This route is used to login a user to his accout.
 responses:
   200:
-    description: User successfully logs in to his account
+    description: Successful login. JWT token generated (OK).
+    schema:
+      id: User Login
+      properties:
+        email:
+          type: string
+          default: arnold
+        password:
+          type: string
+          default: password
+  400:
+    description: Your request is not appropriate (Bad Request).
+

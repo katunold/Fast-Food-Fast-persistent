@@ -1,10 +1,12 @@
-view_all_orders.yml
+view_all_orders
 ---
 tags:
 - Fast Food Orders
 responses:
   200:
     description: User is able to view all orders.
+  400:
+    description: Inappropriate user request (Bad Request).
 parameters:
       - name: auth
         in: header

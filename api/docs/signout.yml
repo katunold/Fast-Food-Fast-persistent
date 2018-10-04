@@ -4,7 +4,9 @@ tags:
 - User logout
 responses:
   200:
-    description: User has succefully logedout.
+    description: User has succefully logedout (OK).
+  401:
+    description: Trying to signout with unauthorized or malformed token token (Unauthorized).
 parameters:
       - name: auth
         in: header

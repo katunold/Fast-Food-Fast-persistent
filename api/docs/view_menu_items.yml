@@ -5,6 +5,8 @@ tags:
 responses:
   200:
     description: User is able to view all menu items.
+  400:
+    description: Inappropriate user request (Bad Request)
 parameters:
       - name: auth
         in: header
