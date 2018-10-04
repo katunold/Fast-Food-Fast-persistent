@@ -88,7 +88,7 @@ class ReturnError:
             'status': 'fail',
             'error_message': 'Sorry, Order item {} not on the menu'.format(order_item)
         }
-        return jsonify(response_object), 400
+        return jsonify(response_object), 404
 
     @staticmethod
     def invalid_name():
