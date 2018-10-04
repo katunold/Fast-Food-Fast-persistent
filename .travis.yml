@@ -12,15 +12,8 @@ script:
 - coverage report
 - coverage xml
 - coveralls
-env:
-  global:
-  - CC_TEST_REPORTER_ID=946ff7a1ca3ae7f39be343e0c3c1f3ab760ca4a28cbcbfe83541fce3fb85c605
-  - GIT_COMMITTED_AT=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then git log -1 --pretty=format:%ct;
-    else git log -1 --skip 1 --pretty=format:%ct; fi)
 before_script:
 - psql -U nnmmzuxramdvkg -f Fast-food.sql
 
-- curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
-  > ./cc-test-reporter
-- chmod +x ./cc-test-reporter
+
 #- ./cc-test-reporter before-build"
