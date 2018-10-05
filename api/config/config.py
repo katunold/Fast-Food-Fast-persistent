@@ -22,7 +22,7 @@ class BaseConfig:
     PORT = "5432"
     DATABASE = "dc09id3sq3n8v9"  # Fast-Food
     USER = "nnmmzuxramdvkg"  # postgres
-    PASSWORD = " b66b5c6610aa107101f45b1ed65fdf579d28336eede8595b3aca8ceed17c6bae"  # qwerty
+    PASSWORD = "b66b5c6610aa107101f45b1ed65fdf579d28336eede8595b3aca8ceed17c6bae"  # qwerty
 
 
 class DevelopmentConfig(BaseConfig):

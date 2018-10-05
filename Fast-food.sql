@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS "Fast-Food";
-CREATE DATABASE "Fast-Food";
-\connect "Fast-Food"
+DROP DATABASE IF EXISTS "dc09id3sq3n8v9";
+CREATE DATABASE "dc09id3sq3n8v9";
+\connect "dc09id3sq3n8v9"
 
 DROP SCHEMA IF EXISTS production CASCADE;
 

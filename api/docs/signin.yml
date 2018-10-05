@@ -14,7 +14,7 @@ responses:
     schema:
       id: User Login
       properties:
-        email:
+        user_name:
           type: string
           default: arnold
         password:
