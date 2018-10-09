@@ -25,9 +25,9 @@ class SignUpController(MethodView):
 
         post_data = request.get_json()
 
-        keys = ("user_name", "email", "contact", "password", "user_type")
+        keys = ["user_name", "email", "contact", "password", "user_type"]
         if not set(keys).issubset(set(post_data)):
-            return ReturnError.missing_fields(keys)
+            return ReturnError.missing_fields([item for item in keys if item not in post_data])
         try:
             user_name = post_data.get('user_name').strip()
             email = post_data.get('email').strip()
@@ -35,7 +35,7 @@ class SignUpController(MethodView):
             password = post_data.get('password').strip()
             user_type = post_data.get('user_type').strip()
         except AttributeError:
-            return ReturnError.invalid_data_type()
+            return ReturnError.invalid_data_type('string', 'all fields')
 
         if not user_name or not email or not contact or not password or not user_type:
             return ReturnError.empty_fields()

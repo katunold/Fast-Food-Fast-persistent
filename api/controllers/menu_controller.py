@@ -107,5 +107,43 @@ class MenuController(MethodView):
                         return jsonify(response_object), 200
                 else:
                     return ReturnError.no_items('menu')
+            else:
+                return ReturnError.invalid_user_token(resp)
+        else:
+            return ReturnError.user_bearer_token_error()
+
+    @swag_from('../docs/delete_menu_item.yml')
+    def delete(self, item_id):
+        """
+        responds to delete requests
+        :param item_id:
+        :return:
+        """
+
+        # get auth_token
+        auth_header = request.headers.get('Authorization')
+
+        if self.validate.check_auth_header(auth_header):
+            auth_token = self.validate.check_auth_header(auth_header)
+
+            resp = self.auth.decode_auth_token(auth_token)
+
+            if not isinstance(resp, str):
+                if self.validate.check_user_type(resp):
+                    menu_item = self.food_model.find_item_by_id(item_id)
+
+                    if not menu_item:
+                        return ReturnError.menu_item_absent(item_id)
+                    else:
+                        self.food_model.delete_menu_item(item_id)
+                        response_object = {
+                            "status": "success",
+                            "message": "Menu item {0} has been deleted.".format(item_id),
+                            "data": True}
+                        return jsonify(response_object), 200
+
+                return ReturnError.denied_permission()
+            else:
+                return ReturnError.invalid_user_token(resp)
         else:
             return ReturnError.user_bearer_token_error()

@@ -41,16 +41,19 @@ class OrderController(MethodView):
             if not isinstance(resp, str):
                 post_data = request.get_json()
 
-                key = ('order_item', 'special_notes')
+                key = ['order_item', 'special_notes']
 
                 if not set(key).issubset(set(post_data)):
-                    return ReturnError.missing_fields(key)
+                    return ReturnError.missing_fields([item for item in key if item not in post_data])
 
                 try:
-                    self.order_item = post_data['order_item'].strip()
+                    try:
+                        self.order_item = post_data['order_item'].strip()
+                    except AttributeError:
+                        return ReturnError.invalid_data_type('string', key[0])
                     self.special_notes = post_data['special_notes'].strip()
                 except AttributeError:
-                    return ReturnError.invalid_data_type()
+                    return ReturnError.invalid_data_type('string', key[1])
                 if not self.special_notes:
                     self.special_notes = "No special notes attached"
                 if not self.order_item:
@@ -160,7 +163,7 @@ class OrderController(MethodView):
                     try:
                         order_status = post_data['order_status'].strip()
                     except AttributeError:
-                        return ReturnError.invalid_data_type()
+                        return ReturnError.invalid_data_type('string', key)
 
                     if order_status.lower() not in status:
                         return ReturnError.order_status_not_found(order_status)

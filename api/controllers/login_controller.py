@@ -26,15 +26,15 @@ class LoginController(MethodView):
         # get post data
         post_data = request.get_json()
 
-        keys = ('user_name', 'password')
+        keys = ['user_name', 'password']
         if not set(keys).issubset(set(post_data)):
-            return ReturnError.missing_fields(keys)
+            return ReturnError.missing_fields([item for item in keys if item not in post_data])
 
         try:
             user_name = post_data.get("user_name").strip()
             password = post_data.get("password").strip()
         except AttributeError:
-            return ReturnError.invalid_data_type()
+            return ReturnError.invalid_data_type('string', 'all fields')
 
         if not user_name or not password:
             return ReturnError.empty_fields()
