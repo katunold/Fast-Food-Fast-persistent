@@ -25,6 +25,9 @@ responses:
         food_item:
           type: string
           default: item name
+        price:
+          type: int
+          default: "0000000"
   409:
     description: Item already exists (Conflict).
   400:
