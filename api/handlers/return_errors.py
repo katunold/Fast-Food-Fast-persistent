@@ -12,15 +12,23 @@ class ReturnError:
     @staticmethod
     def missing_fields(keys):
         return jsonify({"status": "fail",
-                        "error_message": "some of these fields are missing",
+                        "error_message": "These fields are missing",
                         "data": keys}), 400
 
     @staticmethod
-    def invalid_data_type():
-        return jsonify({
-            "status": "fail",
-            "error_message": "Only string data type supported",
-            "data": False}), 400
+    def invalid_data_type(data_type, field):
+        if data_type == "int":
+            response_object = {
+                "status": "fail",
+                "error_message": "Only {} data type supported for {}".format(data_type, field),
+                "data": False}
+        else:
+            response_object = {
+                "status": "fail",
+                "error_message": "Only {} data type supported for {}".format(data_type, field),
+                "data": False}
+
+        return jsonify(response_object), 400
 
     @staticmethod
     def empty_fields():
@@ -148,6 +156,14 @@ class ReturnError:
         return jsonify(response_object), 404
 
     @staticmethod
+    def menu_item_absent(item_id):
+        response_object = {
+            'status': 'successful',
+            'message': 'menu item {} not found'.format(item_id)
+        }
+        return jsonify(response_object), 404
+
+    @staticmethod
     def no_order():
         return jsonify({
             "status": "fail",
@@ -161,5 +177,3 @@ class ReturnError:
             "status": "fail",
             "error_message": "Order status {} not found".format(order_status),
             "data": False}), 404
-
-
