@@ -91,7 +91,7 @@ class TestUserLogin(TestCase):
         response_data = json.loads(login_user.data.decode())
 
         self.assertTrue(response_data['status'] == 'fail')
-        self.assertTrue(response_data['error_message'] == 'some of these fields are missing')
+        self.assertTrue(response_data['error_message'] == 'These fields are missing')
         self.assertTrue(login_user.content_type == 'application/json')
         self.assertEqual(login_user.status_code, 400)
 
@@ -106,7 +106,7 @@ class TestUserLogin(TestCase):
         response_data = json.loads(login_user.data.decode())
 
         self.assertTrue(response_data['status'] == 'fail')
-        self.assertTrue(response_data['error_message'] == 'Only string data type supported')
+        self.assertTrue(response_data['error_message'] == 'Only string data type supported for all fields')
         self.assertTrue(login_user.content_type == 'application/json')
         self.assertEqual(login_user.status_code, 400)
 

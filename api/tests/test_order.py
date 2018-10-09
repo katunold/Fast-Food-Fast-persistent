@@ -21,14 +21,15 @@ class TestOrder(TestCase):
     def tearDown(self):
         self.database.drop_test_schema()
 
-    def add_food_item(self, item_name=None, token=None):
+    def add_food_item(self, item_name=None, price=None, token=None):
         return self.client().post(
             '/api/v1/menu/',
             headers=dict(
                 Authorization='Bearer ' + token
             ),
             data=json.dumps(dict(
-                food_item=item_name
+                food_item=item_name,
+                price=price
             )),
             content_type="application/json"
         )
@@ -71,7 +72,7 @@ class TestOrder(TestCase):
         login = self.login_user('Arnold', 'qwerty')
 
         # Add food item
-        self.add_food_item("katogo", json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("katogo", 1500, json.loads(login.data.decode())['auth_token'])
 
         get_menu = self.client().get(
             '/api/v1/menu',
@@ -99,8 +100,8 @@ class TestOrder(TestCase):
         login = self.login_user('Arnold', 'qwerty')
 
         # Add food item
-        self.add_food_item("katogo", json.loads(login.data.decode())['auth_token'])
-        self.add_food_item("Pork", json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("katogo", 1500, json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("Pork", 3500, json.loads(login.data.decode())['auth_token'])
 
         get_menu = self.client().get(
             '/api/v1/menu',

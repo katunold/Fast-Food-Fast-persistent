@@ -35,14 +35,15 @@ class TestPostOrder(TestCase):
             content_type="application/json"
         )
 
-    def add_food_item(self, item_name=None, token=None):
+    def add_food_item(self, item_name=None, price=None, token=None):
         return self.client().post(
             '/api/v1/menu/',
             headers=dict(
                 Authorization='Bearer ' + token
             ),
             data=json.dumps(dict(
-                food_item=item_name
+                food_item=item_name,
+                price=price
             )),
             content_type="application/json"
         )
@@ -84,10 +85,10 @@ class TestPostOrder(TestCase):
         login = self.login_user('Arnold', 'qwerty')
 
         # Add food item
-        self.add_food_item("katogo", json.loads(login.data.decode())['auth_token'])
-        self.add_food_item("Fish fillet", json.loads(login.data.decode())['auth_token'])
-        self.add_food_item("chappatti and beans", json.loads(login.data.decode())['auth_token'])
-        self.add_food_item("chappatti and beef", json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("katogo", 1500, json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("Fish fillet", 5000, json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beans", 1000, json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beef", 2000, json.loads(login.data.decode())['auth_token'])
 
         # place order food item
         order = self.place_order("chappatti and beef", "Please put considerable gravy",
@@ -113,10 +114,10 @@ class TestPostOrder(TestCase):
         login = self.login_user('Arnold', 'qwerty')
 
         # Add food item
-        self.add_food_item("katogo", json.loads(login.data.decode())['auth_token'])
-        self.add_food_item("Fish fillet", json.loads(login.data.decode())['auth_token'])
-        self.add_food_item("chappatti and beans", json.loads(login.data.decode())['auth_token'])
-        self.add_food_item("chappatti and beef", json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("katogo", 1500, json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("Fish fillet", 5000, json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beans", 1000, json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beef", 2000, json.loads(login.data.decode())['auth_token'])
 
         # place order food item
         order = self.client().post(
@@ -132,13 +133,15 @@ class TestPostOrder(TestCase):
 
         data = json.loads(order.data.decode())
 
+        print(data)
+
         self.assertTrue(data['status'] == 'fail')
-        self.assertTrue(data['error_message'] == 'some of these fields are missing')
+        self.assertTrue(data['error_message'] == 'These fields are missing')
         self.assertTrue(data['data'])
         self.assertTrue(order.content_type == 'application/json')
         self.assertEqual(order.status_code, 400)
 
-    def test_place_order_with_invalid_data_type(self):
+    def test_place_order_with_invalid_data_type_order_item(self):
         """
         Test for placing an order with invalid data
         :return:
@@ -150,10 +153,10 @@ class TestPostOrder(TestCase):
         login = self.login_user('Arnold', 'qwerty')
 
         # Add food item
-        self.add_food_item("katogo", json.loads(login.data.decode())['auth_token'])
-        self.add_food_item("Fish fillet", json.loads(login.data.decode())['auth_token'])
-        self.add_food_item("chappatti and beans", json.loads(login.data.decode())['auth_token'])
-        self.add_food_item("chappatti and beef", json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("katogo", 1500, json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("Fish fillet", 5000, json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beans", 1000, json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beef", 2000, json.loads(login.data.decode())['auth_token'])
 
         # place order food item
         order = self.place_order(5252644268624, "Please put considerable gravy",
@@ -162,7 +165,36 @@ class TestPostOrder(TestCase):
         data = json.loads(order.data.decode())
 
         self.assertTrue(data['status'] == 'fail')
-        self.assertTrue(data['error_message'] == 'Only string data type supported')
+        self.assertTrue(data['error_message'] == 'Only string data type supported for order_item')
+        self.assertFalse(data['data'])
+        self.assertTrue(order.content_type == 'application/json')
+        self.assertEqual(order.status_code, 400)
+
+    def test_place_order_with_invalid_data_type_special_notes(self):
+        """
+        Test for placing an order with invalid data
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+
+        # user login
+        login = self.login_user('Arnold', 'qwerty')
+
+        # Add food item
+        self.add_food_item("katogo", 1500, json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("Fish fillet", 5000, json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beans", 1000, json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beef", 2000, json.loads(login.data.decode())['auth_token'])
+
+        # place order food item
+        order = self.place_order('katogo', 2132242542,
+                                 json.loads(login.data.decode())['auth_token'])
+
+        data = json.loads(order.data.decode())
+
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['error_message'] == 'Only string data type supported for special_notes')
         self.assertFalse(data['data'])
         self.assertTrue(order.content_type == 'application/json')
         self.assertEqual(order.status_code, 400)
@@ -179,10 +211,10 @@ class TestPostOrder(TestCase):
         login = self.login_user('Arnold', 'qwerty')
 
         # Add food item
-        self.add_food_item("katogo", json.loads(login.data.decode())['auth_token'])
-        self.add_food_item("Fish fillet", json.loads(login.data.decode())['auth_token'])
-        self.add_food_item("chappatti and beans", json.loads(login.data.decode())['auth_token'])
-        self.add_food_item("chappatti and beef", json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("katogo", 1500, json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("Fish fillet", 5000, json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beans", 1000, json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beef", 2000, json.loads(login.data.decode())['auth_token'])
 
         # place order food item
         order = self.place_order("", "Please put considerable gravy",
@@ -208,10 +240,10 @@ class TestPostOrder(TestCase):
         login = self.login_user('Arnold', 'qwerty')
 
         # Add food item
-        self.add_food_item("katogo", json.loads(login.data.decode())['auth_token'])
-        self.add_food_item("Fish fillet", json.loads(login.data.decode())['auth_token'])
-        self.add_food_item("chappatti and beans", json.loads(login.data.decode())['auth_token'])
-        self.add_food_item("chappatti and beef", json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("katogo", 1500, json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("Fish fillet", 5000, json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beans", 1000, json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beef", 2000, json.loads(login.data.decode())['auth_token'])
 
         # place order food item
         order = self.place_order("Katogo", "Please put considerable gravy",
@@ -237,10 +269,10 @@ class TestPostOrder(TestCase):
         login = self.login_user('Arnold', 'qwerty')
 
         # Add food item
-        self.add_food_item("katogo", json.loads(login.data.decode())['auth_token'])
-        self.add_food_item("Fish fillet", json.loads(login.data.decode())['auth_token'])
-        self.add_food_item("chappatti and beans", json.loads(login.data.decode())['auth_token'])
-        self.add_food_item("chappatti and beef", json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("katogo", 1500, json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("Fish fillet", 5000, json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beans", 1000, json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beef", 2000, json.loads(login.data.decode())['auth_token'])
 
         # place order food item
         order = self.place_order("Beef", "Please put considerable gravy",
