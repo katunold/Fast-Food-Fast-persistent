@@ -11,7 +11,7 @@ class FoodItemModel:
     """
     Model to hold food item data
     """
-    def __init__(self, food_item=None, user_id=None):
+    def __init__(self, food_item=None, user_id=None, price=None):
         """
         Food Item model template
         :param food_item:
@@ -20,6 +20,7 @@ class FoodItemModel:
         self.item_name = food_item
         self.user_id = user_id
         self.item_status = "available"
+        self.price = price
 
 
 class FoodItems(metaclass=Singleton):
@@ -30,14 +31,15 @@ class FoodItems(metaclass=Singleton):
     _table_ = "menu_items"
     _database_ = DatabaseConnection()
 
-    def add_food_item(self, item_name=None, user_id=None) -> FoodItemModel or None:
+    def add_food_item(self, item_name=None, user_id=None, price=None) -> FoodItemModel or None:
         """
         Add new food item to the menu
         :param item_name:
+        :param price:
         :param user_id:
         :return:
         """
-        menu_data = FoodItemModel(item_name, user_id)
+        menu_data = FoodItemModel(item_name, user_id, price)
 
         del menu_data.item_id
 
@@ -56,7 +58,7 @@ class FoodItems(metaclass=Singleton):
             if isinstance(response, list) and len(response) > 1:
                 data: List[FoodItemModel] = []
                 for res in response:
-                    item_data = FoodItemModel(res['item_name'], res['user_id'])
+                    item_data = FoodItemModel(res['item_name'], res['user_id'], res['price'])
                     item_data.item_status = res['item_status']
                     item_data.item_id = res['item_id']
                     del item_data.user_id
@@ -65,7 +67,7 @@ class FoodItems(metaclass=Singleton):
             elif isinstance(response, dict) or (isinstance(response, list) and len(response) == 1):
                 if isinstance(response, list):
                     response = response[0]
-                item_data1 = FoodItemModel(response['item_name'], response['user_id'])
+                item_data1 = FoodItemModel(response['item_name'], response['user_id'], response['price'])
                 item_data1.item_status = response['item_status']
                 item_data1.item_id = response['item_id']
                 del item_data1.user_id
@@ -84,15 +86,49 @@ class FoodItems(metaclass=Singleton):
         if res and isinstance(res, list):
             data: List[FoodItemModel] = []
             for res in res:
-                item_data = FoodItemModel(res['item_name'], res['user_id'])
+                item_data = FoodItemModel(res['item_name'], res['user_id'], res['price'])
                 item_data.item_status = res['item_status']
                 item_data.item_id = res['item_id']
                 del item_data.user_id
                 data.append(item_data)
             return data
         elif isinstance(res, dict):
-            item_data = FoodItemModel(res['item_name'], res['user_id'])
+            item_data = FoodItemModel(res['item_name'], res['user_id'], res['price'])
             item_data.item_id = res["item_id"]
             item_data.item_status = res['item_status']
             return item_data
         return None
+
+    def find_item_by_id(self, item_id):
+        """
+        Find a specific item given it's name
+        :param item_id:
+        :return:
+        """
+        criteria = {'item_id': item_id}
+        res = self._database_.find(self._table_, criteria=criteria)
+        if res and isinstance(res, list):
+            data: List[FoodItemModel] = []
+            for res in res:
+                item_data = FoodItemModel(res['item_name'], res['user_id'], res['price'])
+                item_data.item_status = res['item_status']
+                item_data.item_id = res['item_id']
+                del item_data.user_id
+                data.append(item_data)
+            return data
+        elif isinstance(res, dict):
+            item_data = FoodItemModel(res['item_name'], res['user_id'], res['price'])
+            item_data.item_id = res["item_id"]
+            item_data.item_status = res['item_status']
+            return item_data
+        return None
+
+    def delete_menu_item(self, item_id) -> bool:
+        """
+        delete a menu item
+        :param item_id:
+        :return:
+        """
+        selection = {"item_id": item_id}
+        self._database_.delete(self._table_, selection)
+        return True

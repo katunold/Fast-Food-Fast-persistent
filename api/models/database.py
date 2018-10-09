@@ -147,6 +147,26 @@ class DatabaseConnection(metaclass=Singleton):
             return cur
         return None
 
+    def delete(self, table_name, selection):
+        """
+        handles delete queries
+        :param table_name:
+        :param selection:
+        :return:
+        """
+        _top = f"""DELETE FROM {self.schema}.{table_name} WHERE """
+
+        cols = " AND ".join([f""" "{col}"='{val}' """ for col, val in selection.items()])
+
+        sql = _top + cols
+
+        cur = self._conn_.cursor()
+        cur.execute(sql)
+        self._conn_.commit()
+        if cur:
+            return cur
+        return None
+
     def drop_test_schema(self):
         """
         delete test schema after using it
