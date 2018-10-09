@@ -79,6 +79,7 @@ The api folder contains the system backend services.
 |`/api/v1/orders/`                                    |GET   |Admin gets a list of all orders |
 |`/api/v1/orders/<int:order_id>/`                     |GET   |Admin gets a specific order  |
 |`/api/v1/users/orders`                               |GET   |User can view his/her order history |
+|`/api/v1/menu/<int:item_id>`                         |DELETE|Admin can delete a menu item |
 |`/api/v1/orders/`                                    |POST  |Posting an order |
 |`/api/v1/orders/<int:order_id>/`                     |PUT   |Updates the status of an order |
 |`/api/v1/auth/logout`                                |POST  |User can logout|
