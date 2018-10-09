@@ -63,11 +63,11 @@ CREATE TABLE test."menu_items" (
 
 CREATE TABLE test.orders (
     order_id SERIAL NOT NULL PRIMARY KEY,
-    user_id integer NOT NULL,
+    user_id integer NOT NULL REFERENCES test."user"(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
     order_item character varying(255) NOT NULL,
     special_notes text NOT NULL,
     order_date timestamp(6) without time zone NOT NULL,
-    item_id integer NOT NULL,
+    item_id integer NOT NULL REFERENCES test."menu_items"(item_id) ON UPDATE CASCADE ON DELETE CASCADE,
     order_status character varying(100) NOT NULL
 );
 
