@@ -21,6 +21,7 @@ CREATE TABLE production."menu_items" (
     item_name character varying(255) NOT NULL,
     user_id integer NOT NULL REFERENCES production."user"(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
     item_status character varying(100) NOT NULL
+    price double precision NOT NULL
 );
 
 CREATE TABLE production.orders (
@@ -57,6 +58,7 @@ CREATE TABLE test."menu_items" (
     item_name character varying(255) NOT NULL,
     user_id integer NOT NULL REFERENCES test."user"(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
     item_status character varying(100) NOT NULL
+    price double precision NOT NULL
 );
 
 CREATE TABLE test.orders (
