@@ -16,6 +16,7 @@ class MenuController(MethodView):
     Class has special methods to handle menu logic
     """
     food_item = None
+    price = None
     validate = Validators()
     auth = Authenticate
     food_model = FoodItems()
@@ -39,24 +40,27 @@ class MenuController(MethodView):
                 if self.validate.check_user_type(resp):
                     post_data = request.get_json()
 
-                    key = "food_item"
+                    key = ["food_item", "price"]
 
-                    if key not in post_data:
-                        return ReturnError.missing_fields(key)
-
+                    if not set(key).issubset(set(post_data)):
+                        return ReturnError.missing_fields([item for item in key if item not in post_data])
                     try:
                         self.food_item = post_data['food_item'].strip()
                     except AttributeError:
-                        return ReturnError.invalid_data_type()
+                        return ReturnError.invalid_data_type('string', key[0])
+                    try:
+                        self.price = int(post_data['price'])
+                    except ValueError:
+                        ReturnError.invalid_data_type('int', key[1])
 
-                    if not self.food_item:
+                    if not self.food_item and not self.price:
                         return ReturnError.empty_fields()
                     elif not self.validate.validate_name(self.food_item):
                         return ReturnError.invalid_name()
                     elif self.validate.check_item_name(self.food_item.lower()):
                         return ReturnError.item_already_exists()
 
-                    food_data = self.food_model.add_food_item(self.food_item.lower(), resp)
+                    food_data = self.food_model.add_food_item(self.food_item.lower(), resp, self.price)
 
                     response_object = {
                         'status': 'success',
