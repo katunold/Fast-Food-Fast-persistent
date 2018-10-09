@@ -32,6 +32,8 @@ class Urls:
                          methods=['POST'], strict_slashes=False)
         app.add_url_rule('/api/v1/menu', view_func=MenuController.as_view('get_menu'),
                          methods=['GET'], strict_slashes=False)
+        app.add_url_rule('/api/v1/menu/<int:item_id>', view_func=MenuController.as_view('delete_menu_item'),
+                         methods=['DELETE'], strict_slashes=False)
 
         """Order routes"""
         app.add_url_rule('/api/v1/orders', view_func=OrderController.as_view('post_order'),
