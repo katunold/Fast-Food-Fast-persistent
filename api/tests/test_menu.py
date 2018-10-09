@@ -21,14 +21,15 @@ class TestUserMenu(TestCase):
     def tearDown(self):
         self.database.drop_test_schema()
 
-    def add_food_item(self, item_name=None, token=None):
+    def add_food_item(self, item_name=None, price=None, token=None):
         return self.client().post(
             '/api/v1/menu/',
             headers=dict(
                 Authorization='Bearer ' + token
             ),
             data=json.dumps(dict(
-                food_item=item_name
+                food_item=item_name,
+                price=price
             )),
             content_type="application/json"
         )
@@ -71,7 +72,7 @@ class TestUserMenu(TestCase):
         login = self.login_user('Arnold', 'qwerty')
 
         # Add food item
-        add_item = self.add_food_item("Katogo", json.loads(login.data.decode())['auth_token'])
+        add_item = self.add_food_item("Katogo", 1500, json.loads(login.data.decode())['auth_token'])
 
         data = json.loads(add_item.data.decode())
 
@@ -91,7 +92,7 @@ class TestUserMenu(TestCase):
         login = self.login_user('Arnold', 'qwerty')
 
         # Add food item
-        add_item = self.add_food_item("Katogo", json.loads(login.data.decode())['auth_token'])
+        add_item = self.add_food_item("Katogo", 1500, json.loads(login.data.decode())['auth_token'])
 
         data = json.loads(add_item.data.decode())
 
@@ -111,7 +112,7 @@ class TestUserMenu(TestCase):
         login = self.login_user('Arnold', 'qwerty')
 
         # Add food item
-        add_item = self.add_food_item(" ", json.loads(login.data.decode())['auth_token'])
+        add_item = self.add_food_item(" ", 1500, json.loads(login.data.decode())['auth_token'])
 
         data = json.loads(add_item.data.decode())
 
@@ -137,14 +138,16 @@ class TestUserMenu(TestCase):
             headers=dict(
                 Authorization='Bearer ' + json.loads(login.data.decode())['auth_token']
             ),
-            data=json.dumps(dict()),
+            data=json.dumps(dict(
+                food_item="Katogo"
+            )),
             content_type="application/json"
         )
 
         data = json.loads(add_food_item.data.decode())
 
         self.assertTrue(data['status'] == 'fail')
-        self.assertTrue(data['error_message'] == 'some of these fields are missing')
+        self.assertTrue(data['error_message'] == 'These fields are missing')
         self.assertTrue(data['data'])
         self.assertTrue(add_food_item.content_type == 'application/json')
         self.assertEqual(add_food_item.status_code, 400)
@@ -161,12 +164,34 @@ class TestUserMenu(TestCase):
         login = self.login_user('Arnold', 'qwerty')
 
         # Add food item
-        add_item = self.add_food_item(12345456, json.loads(login.data.decode())['auth_token'])
+        add_item = self.add_food_item(12345, 1500, json.loads(login.data.decode())['auth_token'])
 
         data = json.loads(add_item.data.decode())
 
         self.assertTrue(data['status'] == 'fail')
-        self.assertTrue(data['error_message'] == 'Only string data type supported')
+        self.assertTrue(data['error_message'] == 'Only string data type supported for food_item')
+        self.assertFalse(data['data'])
+        self.assertTrue(add_item.content_type == 'application/json')
+        self.assertEqual(add_item.status_code, 400)
+
+    def test_add_menu_item_admin_data_type_int(self):
+        """
+        Test for adding a menu item with wrong data type fields
+        :return:
+        """
+        # user registration
+        self.register_user('Arnold', 'arnold@gmail.com', '07061806720', 'qwerty', 'Admin')
+
+        # user login
+        login = self.login_user('Arnold', 'qwerty')
+
+        # Add food item
+        add_item = self.add_food_item("Katogo", "1500ak", json.loads(login.data.decode())['auth_token'])
+
+        data = json.loads(add_item.data.decode())
+
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['error_message'] == 'Only int data type supported for price')
         self.assertFalse(data['data'])
         self.assertTrue(add_item.content_type == 'application/json')
         self.assertEqual(add_item.status_code, 400)
@@ -183,10 +208,10 @@ class TestUserMenu(TestCase):
         login = self.login_user('Arnold', 'qwerty')
 
         # Add item for the first time
-        self.add_food_item("Katogo", json.loads(login.data.decode())['auth_token'])
+        self.add_food_item("Katogo", 1500, json.loads(login.data.decode())['auth_token'])
 
         # Add food item
-        add_item = self.add_food_item("katogo", json.loads(login.data.decode())['auth_token'])
+        add_item = self.add_food_item("katogo", 1500, json.loads(login.data.decode())['auth_token'])
 
         data = json.loads(add_item.data.decode())
 
@@ -211,7 +236,7 @@ class TestUserMenu(TestCase):
         time.sleep(6)
 
         # Add food item
-        add_item = self.add_food_item("katogo", json.loads(login.data.decode())['auth_token'])
+        add_item = self.add_food_item("katogo", 1500, json.loads(login.data.decode())['auth_token'])
 
         data = json.loads(add_item.data.decode())
 
@@ -237,7 +262,8 @@ class TestUserMenu(TestCase):
                 Authorization='Bearer' + json.loads(login.data.decode())['auth_token']
             ),
             data=json.dumps(dict(
-                food_item="Katogo"
+                food_item="Katogo",
+                price=1500
             )),
             content_type="application/json"
         )
