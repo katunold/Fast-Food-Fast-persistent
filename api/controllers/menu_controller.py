@@ -51,9 +51,9 @@ class MenuController(MethodView):
                     try:
                         self.price = int(post_data['price'])
                     except ValueError:
-                        ReturnError.invalid_data_type('int', key[1])
+                        return ReturnError.invalid_data_type('int', key[1])
 
-                    if not self.food_item and not self.price:
+                    if not self.food_item or not self.price:
                         return ReturnError.empty_fields()
                     elif not self.validate.validate_name(self.food_item):
                         return ReturnError.invalid_name()
