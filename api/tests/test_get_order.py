@@ -34,14 +34,15 @@ class TestUserAuth(TestCase):
             content_type="application/json"
         )
 
-    def add_food_item(self, item_name=None, token=None):
+    def add_food_item(self, item_name=None, price=None, token=None):
         return self.client().post(
             '/api/v1/menu/',
             headers=dict(
                 Authorization='Bearer ' + token
             ),
             data=json.dumps(dict(
-                food_item=item_name
+                food_item=item_name,
+                price=price
             )),
             content_type="application/json"
         )
@@ -85,10 +86,10 @@ class TestUserAuth(TestCase):
         login_client = self.login_user('Samson', 'qwerty')
 
         # Add food item
-        self.add_food_item("katogo", json.loads(login_admin.data.decode())['auth_token'])
-        self.add_food_item("Fish fillet", json.loads(login_admin.data.decode())['auth_token'])
-        self.add_food_item("chappatti and beans", json.loads(login_admin.data.decode())['auth_token'])
-        self.add_food_item("chappatti and beef", json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("katogo", 1500, json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("Fish fillet", 5000, json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beans", 1000, json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beef", 2000, json.loads(login_admin.data.decode())['auth_token'])
 
         # place order food item
         self.place_order("chappatti and beef", "Please put considerable gravy",
@@ -126,10 +127,10 @@ class TestUserAuth(TestCase):
         login_client = self.login_user('Samson', 'qwerty')
 
         # Add food item
-        self.add_food_item("katogo", json.loads(login_admin.data.decode())['auth_token'])
-        self.add_food_item("Fish fillet", json.loads(login_admin.data.decode())['auth_token'])
-        self.add_food_item("chappatti and beans", json.loads(login_admin.data.decode())['auth_token'])
-        self.add_food_item("chappatti and beef", json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("katogo", 1500, json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("Fish fillet", 5000, json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beans", 1000, json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beef", 2000, json.loads(login_admin.data.decode())['auth_token'])
 
         # place order food item
         self.place_order("chappatti and beef", "Please put considerable gravy",
@@ -167,10 +168,10 @@ class TestUserAuth(TestCase):
         self.login_user('Samson', 'qwerty')
 
         # Add food item
-        self.add_food_item("katogo", json.loads(login_admin.data.decode())['auth_token'])
-        self.add_food_item("Fish fillet", json.loads(login_admin.data.decode())['auth_token'])
-        self.add_food_item("chappatti and beans", json.loads(login_admin.data.decode())['auth_token'])
-        self.add_food_item("chappatti and beef", json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("katogo", 1500, json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("Fish fillet", 5000, json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beans", 1000, json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beef", 2000, json.loads(login_admin.data.decode())['auth_token'])
 
         get_orders = self.client().get(
             '/api/v1/orders',
@@ -200,10 +201,10 @@ class TestUserAuth(TestCase):
         login_client = self.login_user('Samson', 'qwerty')
 
         # Add food item
-        self.add_food_item("katogo", json.loads(login_admin.data.decode())['auth_token'])
-        self.add_food_item("Fish fillet", json.loads(login_admin.data.decode())['auth_token'])
-        self.add_food_item("chappatti and beans", json.loads(login_admin.data.decode())['auth_token'])
-        self.add_food_item("chappatti and beef", json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("katogo", 1500, json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("Fish fillet", 5000, json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beans", 1000, json.loads(login_admin.data.decode())['auth_token'])
+        self.add_food_item("chappatti and beef", 2000, json.loads(login_admin.data.decode())['auth_token'])
 
         # place order food item
         self.place_order("chappatti and beef", "Please put considerable gravy",
