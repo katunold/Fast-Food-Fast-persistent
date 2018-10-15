@@ -3,6 +3,7 @@ Main app root of the api endpoints
 """
 from flasgger import Swagger
 from flask import Flask, redirect
+from flask_cors import CORS
 
 from api.config.config import DevelopmentConfig, HostConfig
 from api.models.database import DatabaseConnection
@@ -20,7 +21,7 @@ class Server:
         Swagger(app)
         app.config.update(env.__dict__ or {})
         Urls.generate(app)
-
+        CORS(app)
         with app.app_context():
             database = DatabaseConnection()
             database.init_db(app)
