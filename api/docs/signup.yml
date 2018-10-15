@@ -1,0 +1,37 @@
+signup
+---
+tags:
+- User Signup and Login
+parameters:
+  - in: body
+    name: body
+    required: true
+    type: string
+    description: This route is used to Sign up a new user.
+responses:
+  201:
+    description: New user account created
+    schema:
+      id: User Signup
+      properties:
+        user_name:
+          type: string
+          default: your name
+        email:
+          type: string
+          default: yourname@mail.com
+        contact:
+          type: string
+          default: "07000000000"
+        password:
+          type: string
+          default: password
+        user_type:
+          type: string
+          default: admin or client
+  400:
+    description: Your request is not appropriate (Bad Request).
+  409:
+    description: User name already taken (Conflict)
+
+

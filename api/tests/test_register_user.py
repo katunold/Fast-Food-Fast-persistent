@@ -1,5 +1,5 @@
 """
-Module handles all tests
+Module handles tests for user auth
 """
 import json
 from unittest import TestCase
@@ -77,7 +77,7 @@ class TestUserAuth(TestCase):
         )
         response_data = json.loads(register.data.decode())
         self.assertTrue(response_data['status'] == "fail")
-        self.assertTrue(response_data['error_message'] == "some of these fields are missing")
+        self.assertTrue(response_data['error_message'] == "These fields are missing")
         self.assertTrue(response_data['data'])
         self.assertTrue(register.content_type == "application/json")
         self.assertEqual(register.status_code, 400)
@@ -90,7 +90,7 @@ class TestUserAuth(TestCase):
         register = self.register_user(13421516, 'arnold@gmail.com', '0706180672', 'qwerty', 'admin')
         received_data = json.loads(register.data.decode())
         self.assertTrue(received_data['status'] == 'fail')
-        self.assertTrue(received_data['error_message'] == 'Only string data type supported')
+        self.assertTrue(received_data['error_message'] == 'Only string data type supported for all fields')
         self.assertFalse(received_data['data'])
         self.assertTrue(register.content_type == "application/json")
         self.assertEqual(register.status_code, 400)
@@ -140,7 +140,7 @@ class TestUserAuth(TestCase):
         testing invalid contact
         :return:
         """
-        register = self.register_user('Arnold', 'arnold@gmail', '0706180672', 'qwerty', 'admin')
+        register = self.register_user('Arnold', 'arnold@gmail.com', '0706180', 'qwerty', 'admin')
         data = json.loads(register.data.decode())
         self.assertEqual(register.status_code, 400)
         self.assertIn("error_message", data)
@@ -154,7 +154,7 @@ class TestUserAuth(TestCase):
         register = self.register_user('Arnold94', 'arnold@gmail.com', '0706180672', 'qwerty', 'admin')
         data = json.loads(register.data.decode())
         self.assertIn("error_message", data)
-        self.assertTrue(data['data'])
+        self.assertFalse(data['data'])
         self.assertTrue(data['error_message'])
         self.assertEqual(register.status_code, 400)
         self.assertTrue(register.content_type, 'application/json')
@@ -187,7 +187,7 @@ class TestUserAuth(TestCase):
         self.assertTrue(register.content_type == "application/json")
         self.assertEqual(register.status_code, 409)
 
-    def test_invalid_user_type(self):
+    def test_register_with_invalid_user_type(self):
         """
         testing invalid contact
         :return:

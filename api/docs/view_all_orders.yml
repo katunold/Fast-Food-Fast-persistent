@@ -1,0 +1,28 @@
+view_all_orders
+---
+tags:
+- Fast Food Orders
+responses:
+  200:
+    description: User is able to view all orders.
+  400:
+    description: Inappropriate user request (Bad Request).
+parameters:
+      - name: auth
+        in: header
+        name: Authorization
+        description: an authorization header
+        required: true
+        type: string
+      - name: order_id
+        in: path
+        description: ID of the order to update
+security:
+  - JWT:
+      description: Pass in jwt token. i.e Bearer <jwt>
+      type: apiKey
+      scheme: bearer
+      name: Authorization
+      in: header
+      template: "Bearer {apiKey}"
+      bearerFormat: JWT

@@ -1,7 +1,6 @@
 """
 Module for user models
 """
-import datetime
 
 from api.models.database import DatabaseConnection
 from api.utils.singleton import Singleton
@@ -51,10 +50,8 @@ class Users(metaclass=Singleton):
         user = UserModel(user_name, email, contact, password, user_type)
         user.password = user.password.decode('utf8')
         del user.user_id
-        submit = self._database_.insert(self._table_, user.__dict__)
+        self._database_.insert(self._table_, user.__dict__)
 
-        if not submit:
-            return None
         return user
 
     def find_user_by_username(self, username) -> UserModel or None:
@@ -70,7 +67,8 @@ class Users(metaclass=Singleton):
             user = UserModel(res['user_name'], res['email'],
                              res['contact'], None, res['user_type'])
             user.user_id = res["user_id"]
-            return user.user_name
+            user.password = res['password'].encode('utf8')
+            return user
         return None
 
     def find_user_by_email(self, email) -> UserModel or None:
@@ -86,4 +84,19 @@ class Users(metaclass=Singleton):
                              res['contact'], None, res['user_type'])
             user.user_id = res['user_id']
             return user.email
+        return None
+
+    def find_user_by_id(self, user_id) -> UserModel or None:
+        """
+        find a specific user given a user id
+        :param user_id:
+        :return:
+        """
+        criteria = {'user_id': user_id}
+        res = self._database_.find(self._table_, criteria=criteria)
+        if res and isinstance(res, dict):
+            user = UserModel(res['user_name'], res['email'],
+                             res['contact'], None, res['user_type'])
+            user.user_id = res['user_id']
+            return user
         return None

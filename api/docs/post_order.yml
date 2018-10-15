@@ -1,0 +1,43 @@
+post_orderl
+---
+tags:
+- Fast Food Orders
+parameters:
+      - name: auth
+        in: header
+        name: Authorization
+        description: an authorization header
+        required: true
+        type: string
+
+      - name: Post order
+        in: body
+        name: body
+        description: User enters order details here
+        required: true
+        type: string
+responses:
+  200:
+    description: User is able to post an order here.
+  400:
+    description: Request was inappropriate (Bad Request).
+  404:
+    description: Order Item not on the menu
+    schema:
+      id: Post Order
+      properties:
+        order_item:
+          type: string
+          default: Food item
+        special_notes:
+          type: string
+          default: No special notes attached
+security:
+  - JWT:
+      description: Pass in jwt token. i.e Bearer <jwt>
+      type: apiKey
+      scheme: bearer
+      name: Authorization
+      in: header
+      template: "Bearer {apiKey}"
+      bearerFormat: JWT

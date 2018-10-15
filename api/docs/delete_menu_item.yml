@@ -1,0 +1,31 @@
+delete_menu_item
+---
+tags:
+- Fast Food Menu
+parameters:
+      - name: auth
+        in: header
+        name: Authorization
+        description: an authorization header
+        required: true
+        type: string
+
+      - name: item_id
+        in: path
+        description: ID of the menu to delete
+responses:
+  200:
+    description: Admin deletes the item in the menu.
+  403:
+    description: Permission denied; Login as admin (Forbidden)
+  400:
+    description: Inappropriate request (Bad Request)
+security:
+  - JWT:
+      description: Pass in jwt token. i.e Bearer <jwt>
+      type: apiKey
+      scheme: bearer
+      name: Authorization
+      in: header
+      template: "Bearer {apiKey}"
+      bearerFormat: JWT

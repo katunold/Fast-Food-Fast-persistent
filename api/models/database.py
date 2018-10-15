@@ -122,11 +122,59 @@ class DatabaseConnection(metaclass=Singleton):
                 return val
         return None
 
+    def update(self, table_name, selection, update):
+        """
+        Handles update queries
+        :param table_name:
+        :param selection:
+        :param update:
+        :return:
+        """
+        _top = f"""UPDATE {self.schema}.{table_name} SET """
+
+        vals = ", ".join([f""" "{col1}"='{val1}' """ for col1, val1 in update.items()])
+
+        middle = """ WHERE """
+
+        cols = " AND ".join([f""" "{col}"='{val}' """ for col, val in selection.items()])
+
+        sql = _top + vals + middle + cols
+
+        cur = self._conn_.cursor()
+        cur.execute(sql)
+        self._conn_.commit()
+        if cur:
+            return cur
+        return None
+
+    def delete(self, table_name, selection):
+        """
+        handles delete queries
+        :param table_name:
+        :param selection:
+        :return:
+        """
+        _top = f"""DELETE FROM {self.schema}.{table_name} WHERE """
+
+        cols = " AND ".join([f""" "{col}"='{val}' """ for col, val in selection.items()])
+
+        sql = _top + cols
+
+        cur = self._conn_.cursor()
+        cur.execute(sql)
+        self._conn_.commit()
+        if cur:
+            return cur
+        return None
+
     def drop_test_schema(self):
         """
         delete test schema after using it
         :return:
         """
         cur = self._conn_.cursor()
+        cur.execute("""DELETE FROM test.menu_items""")
+        cur.execute("""DELETE FROM test.orders""")
         cur.execute("""DELETE FROM test.user""")
+        cur.execute("""DELETE FROM test.blacklist_token""")
         self._conn_.commit()

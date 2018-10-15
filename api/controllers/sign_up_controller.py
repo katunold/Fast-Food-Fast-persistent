@@ -3,6 +3,7 @@ module to handle user sign-up logic
 """
 import copy
 
+from flasgger import swag_from
 from flask import request, jsonify
 from flask.views import MethodView
 
@@ -17,14 +18,16 @@ class SignUpController(MethodView):
     User Registration
     """
     _user_ = Users()
+    validate = Validators()
 
+    @swag_from('../docs/signup.yml')
     def post(self):
 
         post_data = request.get_json()
 
-        keys = ("user_name", "email", "contact", "password", "user_type")
+        keys = ["user_name", "email", "contact", "password", "user_type"]
         if not set(keys).issubset(set(post_data)):
-            return ReturnError.missing_fields(keys)
+            return ReturnError.missing_fields([item for item in keys if item not in post_data])
         try:
             user_name = post_data.get('user_name').strip()
             email = post_data.get('email').strip()
@@ -32,26 +35,26 @@ class SignUpController(MethodView):
             password = post_data.get('password').strip()
             user_type = post_data.get('user_type').strip()
         except AttributeError:
-            return ReturnError.invalid_data_type()
+            return ReturnError.invalid_data_type('string', 'all fields')
 
         if not user_name or not email or not contact or not password or not user_type:
             return ReturnError.empty_fields()
-        elif not Validators.validate_password(password, 6):
+        elif not self.validate.validate_password(password, 6):
             return ReturnError.invalid_password()
-        elif not Validators.validate_email(email):
+        elif not self.validate.validate_email(email):
             return ReturnError.invalid_email()
-        elif not Validators.check_if_email_exists(email):
+        elif not self.validate.check_if_email_exists(email):
             return ReturnError.email_already_exists()
-        elif not Validators.validate_contact(contact):
+        elif not self.validate.validate_contact(contact):
             return ReturnError.invalid_contact()
-        elif not Validators.validate_username(user_name):
-            return ReturnError.invalid_user_name()
-        elif not Validators.check_if_user_name_exists(user_name):
+        elif not self.validate.validate_name(user_name):
+            return ReturnError.invalid_name()
+        elif not self.validate.check_if_user_name_exists(user_name):
             return ReturnError.username_already_exists()
-        elif not Validators.validate_user_type(user_type):
+        elif not self.validate.validate_user_type(user_type):
             return ReturnError.invalid_user_type()
         user = self._user_.register_user(user_name, email, contact,
-                                         Authenticate.hash_password(password), user_type)
+                                         Authenticate.hash_password(password), user_type.lower())
         user = copy.deepcopy(user)
         del user.password
 
