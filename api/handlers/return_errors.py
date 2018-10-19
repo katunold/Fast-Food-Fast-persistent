@@ -158,7 +158,7 @@ class ReturnError:
     @staticmethod
     def menu_item_absent(item_id):
         response_object = {
-            'status': 'successful',
+            'status': 'fail',
             'message': 'menu item {} not found'.format(item_id)
         }
         return jsonify(response_object), 404
