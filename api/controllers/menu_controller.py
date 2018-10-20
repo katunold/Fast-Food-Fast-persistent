@@ -94,14 +94,14 @@ class MenuController(MethodView):
                 if menu_data:
                     if isinstance(menu_data, list) and len(menu_data) > 0:
                         response_object = {
-                            "status": "successful",
+                            "status": "success",
                             "data": [obj.__dict__ for obj in menu_data]
                         }
                         return jsonify(response_object), 200
                     elif isinstance(menu_data, object):
 
                         response_object = {
-                            "status": "successful",
+                            "status": "success",
                             "data": [menu_data.__dict__]
                         }
                         return jsonify(response_object), 200
