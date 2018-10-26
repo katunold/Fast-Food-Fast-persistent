@@ -130,7 +130,7 @@ class Orders(metaclass=Singleton):
             elif isinstance(response, dict) or (isinstance(response, list) and len(response) == 1):
                 if isinstance(response, list):
                     response = response[0]
-                order_data = OrderModel(response['order_id'], response['order_item'], response['special_notes'])
+                order_data = OrderModel(response['user_id'], response['order_item'], response['special_notes'])
                 client_data = self.user.find_user_by_id(response['user_id'])
                 item_data = self.menu.find_item_by_id(response["item_id"])
                 order_data.client = client_data.user_name
@@ -149,7 +149,7 @@ class Orders(metaclass=Singleton):
         criteria = {'order_id': order_id}
         res = self._database_.find(self._table_, criteria=criteria)
         if res and isinstance(res, dict):
-            order_data = OrderModel(res['order_id'], res['order_item'], res['special_notes'])
+            order_data = OrderModel(res['user_id'], res['order_item'], res['special_notes'])
             client_data = self.user.find_user_by_id(res['user_id'])
             item_data = self.menu.find_item_by_id(res["item_id"])
             order_data.client = client_data.user_name
