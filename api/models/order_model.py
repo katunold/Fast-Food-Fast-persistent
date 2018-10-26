@@ -150,6 +150,12 @@ class Orders(metaclass=Singleton):
         res = self._database_.find(self._table_, criteria=criteria)
         if res and isinstance(res, dict):
             order_data = OrderModel(res['order_id'], res['order_item'], res['special_notes'])
+            client_data = self.user.find_user_by_id(res['user_id'])
+            item_data = self.menu.find_item_by_id(res["item_id"])
+            order_data.client = client_data.user_name
+            order_data.client_contact = client_data.contact
+            order_data.client_email = client_data.email
+            order_data.order_cost = item_data.price
             order_data.item_id = res['item_id']
             order_data.order_id = res['order_id']
             order_data.order_date = res['order_date']
