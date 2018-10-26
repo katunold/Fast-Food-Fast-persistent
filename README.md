@@ -9,6 +9,9 @@ This project is mean't to help users to easily make orders of food online and Ad
 | gh-Pages | Heroku | Pivotal Tracker |
 |----------|--------|-----------------|
 |[gh-pages Link](https://katunold.github.io/Fast-food-Fast/)|[Heroku Link](https://fast-food-andela-way.herokuapp.com/apidocs/)|[Pivotaltracker Link](https://www.pivotaltracker.com/n/projects/2200063)                 |
+### Links to working demo of the app
+- [Register and Login as a Client](https://katunold.github.io/Fast-food-Fast/)
+- [Register as an admin](https://katunold.github.io/Fast-food-Fast/UI/admin/admin_register.html)
 
 ***Features***
  * User can register with the system
