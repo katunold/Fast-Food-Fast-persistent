@@ -113,7 +113,7 @@ class Orders(metaclass=Singleton):
             if isinstance(response, list) and len(response) > 1:
                 data: List[OrderModel] = []
                 for res in response:
-                    order_data = OrderModel(res['order_id'], res['order_item'], res['special_notes'])
+                    order_data = OrderModel(res['user_id'], res['order_item'], res['special_notes'])
                     client_data = self.user.find_user_by_id(res['user_id'])
                     item_data = self.menu.find_item_by_id(res["item_id"])
                     order_data.client = client_data.user_name
